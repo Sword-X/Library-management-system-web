@@ -1,9 +1,11 @@
 <template>
   <div id="app">
+    <!-- <el-button type="text">文字按钮111</el-button>
+    <el-button type="text" disabled>文字按钮</el-button>
     <nav>
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
+      <router-link to="/login">login</router-link>
+    </nav> -->
     <router-view/>
   </div>
 </template>
