@@ -25,7 +25,41 @@ const routes: Array<RouteConfig> = [
   },{
     path: '/main',
     name: 'main',
-    component: () => import(/* webpackChunkName: "about" */ '../views/main/IndexView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/main/IndexView.vue'),
+    children: [
+      {
+        path: '/index',
+        name: 'index',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/index/IndexView.vue')
+      },{
+        path: '/user',
+        name: 'user',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/user/UserView.vue')
+      },{
+        path: '/book',
+        name: 'book',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BookView.vue'),
+        children: [
+          {
+            path: '/borrow',
+            name: 'borrow',
+            component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BorrowView.vue')
+          }
+        ]
+      },{
+        path: '/bookStore',
+        name: 'bookStore',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BookStoreView.vue')
+      },{
+        path: '/log',
+        name: 'log',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/log/LogView.vue')
+      },{
+        path: '/role',
+        name: 'role',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/role/RoleView.vue')
+      }
+    ]
   }
 ]
 

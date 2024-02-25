@@ -4,10 +4,19 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import {axiosGet,axiosPost,axiosDelete} from "@/serverApi/request";
+import axios from 'axios';
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI);
+
+//请求方法
+
+Vue.prototype.$axiosGet = axiosGet;
+Vue.prototype.$axiosPost = axiosPost;
+Vue.prototype.$axiosDelete = axiosDelete;
+axios.defaults.baseURL = '/api'
 
 new Vue({
   router,
