@@ -69,4 +69,21 @@ const router = new VueRouter({
   routes
 })
 
+/**
+ * 路由时全局判断登陆状态
+ */
+router.beforeEach((to,from,next) => {
+  console.log("全局登录判断",to,from,next)
+  if(to.name != 'login'){
+    const token = localStorage.getItem('token');
+    if(!token){
+      next("/login");
+    }else{
+      next();
+    }
+  }else{
+    next();
+  }
+})
+
 export default router

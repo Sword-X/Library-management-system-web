@@ -18,6 +18,12 @@ Vue.prototype.$axiosPost = axiosPost;
 Vue.prototype.$axiosDelete = axiosDelete;
 axios.defaults.baseURL = '/api'
 
+// const token = localStorage.getItem('token');
+// if (token) {
+//   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // 将令牌添加到默认请求头部
+// } else {
+//   router.push('/login'); // 没有令牌则直接跳转到登录页面
+// }
 new Vue({
   router,
   store,
