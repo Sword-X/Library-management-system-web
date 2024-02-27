@@ -6,6 +6,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import {axiosGet,axiosPost,axiosDelete} from "@/serverApi/request";
 import axios from 'axios';
+import "@/assets/global.css";
 
 Vue.config.productionTip = false
 
