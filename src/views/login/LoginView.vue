@@ -31,6 +31,9 @@
         <el-form-item label="手机号：" :label-width="formLabelWidth" prop="phone">
         <el-input type="name" v-model="registerUserForm.phone" placeholder="请输入手机号"></el-input>
         </el-form-item>
+        <el-form-item label="地址：" :label-width="formLabelWidth" prop="address">
+        <el-input type="name" v-model="registerUserForm.address" placeholder="请输入地址"></el-input>
+        </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="registerUser('registerUserForm')">确 定</el-button>
@@ -106,7 +109,8 @@
           password: '',
           secondPassword: '',
           name: '',
-          phone: ''
+          phone: '',
+          address: ''
         },
         formLabelWidth: '100px'
       }

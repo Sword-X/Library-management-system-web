@@ -2,7 +2,7 @@
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="35%" center :close-on-click-modal="false">
         <el-form :model="registerUserForm" :rules="registerUserRules" ref="registerUserForm">
         <el-form-item label="用户名：" :label-width="formLabelWidth" prop="username">
-        <el-input v-model="registerUserForm.username" placeholder="请输入用户名"></el-input>
+        <el-input v-model="registerUserForm.username" placeholder="请输入用户名" :disabled="usernameInput"></el-input>
         </el-form-item>
         <el-form-item label="密码：" :label-width="formLabelWidth" prop="password">
         <el-input type="password" v-model="registerUserForm.password" placeholder="请输入密码"></el-input>
@@ -15,6 +15,9 @@
         </el-form-item>
         <el-form-item label="手机号：" :label-width="formLabelWidth" prop="phone">
         <el-input type="name" v-model="registerUserForm.phone" placeholder="请输入手机号"></el-input>
+        </el-form-item>
+        <el-form-item label="地址：" :label-width="formLabelWidth" prop="address">
+        <el-input type="name" v-model="registerUserForm.address" placeholder="请输入地址"></el-input>
         </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -71,13 +74,16 @@
         },
         dialogFormVisible: false,
         registerUserForm: {
+          id: '',
           username: '',
           password: '',
           secondPassword: '',
           name: '',
-          phone: ''
+          phone: '',
+          address: ''
         },
         title: "用户新增",
+        usernameInput: false,
         formLabelWidth: '100px'
       }
     },
@@ -95,13 +101,17 @@
             if(data.code){
               this.$refs[formName].resetFields();
               this.dialogFormVisible = false;
-              Message.success("操作成功！")
+              Message.success("操作成功！");
+              this.sendMessage2Parent();
             }
           } else {
             console.log('error submit!!');
             return false;
           }
         });
+      },
+      sendMessage2Parent(){
+        this.$emit('customEvent',true);
       }
     }
   }

@@ -3,69 +3,115 @@
     <!-- 搜索框 -->
     <div class="search-css">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" label-position="left">
-       <el-form-item label="审批人">
-      <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+       <el-form-item label="姓名">
+      <el-input v-model="formInline.name" placeholder="请输入姓名"></el-input>
       </el-form-item>
-      <el-form-item label="活动区域">
-        <el-select v-model="formInline.region" placeholder="活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
-        </el-select>
+      <el-form-item label="手机号">
+      <el-input v-model="formInline.phone" placeholder="请输入手机号"></el-input>
+      </el-form-item>
+      <el-form-item label="地址">
+      <el-input v-model="formInline.address" placeholder="请输入地址"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="getUserPage">查询</el-button>
       </el-form-item>
-    </el-form>
+      </el-form>
     </div>
     
     <div class="menu-css">
       <el-button type="success" @click="openAddUserDialog">新增</el-button>
-      <add-user-dialog ref="addUserDialog" v-model="dialogFormVisible"/>
+      <el-button type="mini" @click="deleteByIds">批量删除</el-button>
+      <add-user-dialog @customEvent="handleCustomEvent" ref="addUserDialog" v-model="dialogFormVisible"/> <!-- @customEvent="handleCustomEvent"监听子组件的自定义事件 -->
     </div>
 
     <!-- 列表显示区域 -->
-    <div v-for="item in paginatedList" :key="item.id">
-      <!-- 在这里展示你的列表项，比如： -->
-      <p>{{ item.name }}</p>
+    <div>
+      <el-table
+    ref="multipleTable"
+    :data="userTableData"
+    tooltip-effect="dark"
+    style="width: 100%"
+    @selection-change="handleSelectionChange">
+    <el-table-column
+      type="selection"
+      width="55">
+    </el-table-column>
+    <el-table-column
+      prop="username"
+      label="用户名"
+      width="240">
+    </el-table-column>
+    <el-table-column
+      prop="name"
+      label="姓名"
+      width="240">
+    </el-table-column>
+    <el-table-column
+      prop="phone"
+      label="手机号"
+      width="240">
+    </el-table-column>
+    <el-table-column
+      prop="lastLoginTime"
+      label="上次登陆时间"
+      width="240">
+      <template slot-scope="scope">
+          <span>{{dateFormat(scope.row.lastLoginTime) }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="address"
+      label="地址"
+      show-overflow-tooltip>
+    </el-table-column>
+    <el-table-column label="操作" width="150">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+        <el-button
+          size="mini"
+          type="danger"
+          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+      </template>
+      </el-table-column>
+    </el-table>
     </div>
 
     <!-- 分页组件 -->
+    <div class="paginationClass">
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage"
+      :current-page="pageNum"
       :page-sizes="[10, 20, 30, 40]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="totalItems">
+      :total="total">
     </el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
-import AddUserDialog from "@/components/AddUserDialog.vue";
-// import CommonDialog from '@/components/CommonDialog.vue';
+  import ApiConst from '@/serverApi/api';
+  import { Message } from 'element-ui';
+  import AddUserDialog from "@/components/AddUserDialog.vue";
 export default {
   data() {
     return {
+      userTableData: [],
+      multipleSelection: [],
+      ids: [],
       dialogFormVisible: false,
-      currentPage: 1, // 当前页码
+      pageNum: 1, // 当前页码
       pageSize: 10, // 每页显示的数量
-      totalItems: 0, // 总条目数
-      allList: [], // 原始数据列表
-      paginatedList: [], // 分页后的数据列表
-        registerUserForm: {
-          username: '',
-          password: '',
-          secondPassword: '',
-          name: '',
-          phone: ''
-        },
-        formLabelWidth: '100px',
-        formInline: {
-          user: '',
-          region: ''
-        }
+      total: 0, // 总条目数
+      formInline: {
+        user: '',
+        phone: '',
+        address: ''
+      }
     };
   },
   created() {
@@ -73,24 +119,67 @@ export default {
     this.fetchData();
   },
   methods: {
-    openDialog() {
-      this.isShow = true;
+    // 监听子组件传值
+    handleCustomEvent(flag){
+      console.log('监听用户管理子组件传值',flag)
+      if(flag){
+        this.getUserPage();
+      }
     },
+    async deleteByIds(){
+      this.$confirm("是否确定删除","提示",{
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async ()=>{
+          this.multipleSelection.forEach(item => {this.ids.push(item.id)});
+        var data = await this.$axiosPost(ApiConst.user.delete,this.ids);
+        console.log('getUserPage',data);
+        if(data.code){
+          Message.success("操作成功！");
+          this.fetchData();
+        }
+      })
+    },
+      dateFormat(dateStr){
+        return new Date(dateStr).toLocaleString().replaceAll("/","-");
+      },
+      async handleEdit(index, row) {
+        this.$refs.addUserDialog.dialogFormVisible = true;
+        this.$refs.addUserDialog.title = "编辑用户";
+        this.$refs.addUserDialog.usernameInput = true;
+        row.secondPassword = row.password;
+        this.$refs.addUserDialog.registerUserForm = Object.assign({},row);
+        console.log(index, row);
+      },
+      async handleDelete(index, row) {
+        this.$confirm("是否确定删除","提示",{
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async ()=>{
+          this.ids = [];
+          this.ids.push(row.id);
+          var data = await this.$axiosPost(ApiConst.user.delete,this.ids);
+          console.log('getUserPage',data);
+          if(data.code){
+            Message.success("操作成功！");
+            this.fetchData();
+          }
+        })
+      },
+    handleSelectionChange(val) {
+        this.multipleSelection = val;
+        console.log(this.multipleSelection);
+    },
+
     openAddUserDialog(){
-      console.log(1111);
       this.$refs.addUserDialog.dialogFormVisible = true;
       this.$refs.addUserDialog.title = "新增用户";
     },
     // 从服务器获取数据的函数
     fetchData() {
-      // 这里是模拟数据，实际情况应从API接口获取
-      this.allList = [
-        { id: 1, name: 'Item 1' },
-        { id: 2, name: 'Item 2' },
-        // ... 更多数据
-      ];
-      this.totalItems = this.allList.length;
-      this.updatePaginatedList();
+      this.getUserPage();
     },
     // 处理每页显示数量变化
     handleSizeChange(val) {
@@ -99,22 +188,29 @@ export default {
     },
     // 处理页码变化
     handleCurrentChange(val) {
-      this.currentPage = val;
+      this.pageNum = val;
       this.updatePaginatedList();
     },
     // 更新分页后的数据列表
     updatePaginatedList() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      const end = this.currentPage * this.pageSize;
-      this.paginatedList = this.allList.slice(start, end);
+      this.formInline.pageNum = this.pageNum;
+      this.formInline.pageSize = this.pageSize;
+      this.getUserPage();
     },
-    onSubmit() {
-        console.log('submit!');
+    async getUserPage() {
+        var data = await this.$axiosPost(ApiConst.user.getPage,this.formInline);
+        console.log('getUserPage',data);
+        if(data.code){
+          // Message.success("操作成功！");
+          this.userTableData = data.data.list;
+          this.pageSize = data.data.pageSize;
+          this.pageNum = data.data.pageNum;
+          this.total = data.data.total;
+        }
     }
   },
   components: {
     AddUserDialog,
-    // CommonDialog
   },
 };
 </script>
@@ -128,5 +224,11 @@ export default {
     display: flex; /* 设置display属性为flex */
     align-items: left; /* 水平居中对齐 */
   }
-  
+  /* .paginationClass{
+    position: fixed;
+    bottom: 0;
+    height: 40px;
+    width: 100%;
+    text-align: center;
+  } */
 </style>
