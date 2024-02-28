@@ -31,27 +31,43 @@
     @selection-change="handleSelectionChange">
     <el-table-column
       type="selection"
-      width="55">
+      width="55"
+      align="center">
     </el-table-column>
     <el-table-column
       prop="roleCode"
       label="角色编码"
-      width="240">
+      width="240"
+      align="center">
     </el-table-column>
     <el-table-column
       prop="roleName"
       label="角色名称"
-      width="240">
+      width="240"
+      align="center">
     </el-table-column>
     <el-table-column
       prop="createTime"
       label="创建时间"
-      width="240">
+      width="240"
+      align="center">
       <template slot-scope="scope">
           <span>{{dateFormat(scope.row.createTime) }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="操作" >
+    <el-table-column label="权限配置" align="center">
+      <template slot-scope="scope">
+        <!-- <el-button
+        type="primary" plain round
+          size="mini"
+          @click="handleEdit(scope.$index, scope.row)">包含用户</el-button> -->
+        <el-button
+        type="primary" plain round
+          size="mini"
+          @click="assignMenu(scope.$index, scope.row)">分配菜单</el-button>
+      </template>
+      </el-table-column>
+    <el-table-column label="操作" align="center">
       <template slot-scope="scope">
         <el-button
           size="mini"
@@ -77,6 +93,36 @@
       :total="total">
     </el-pagination>
     </div>
+    <!-- 用户dialog -->
+    <!-- <el-dialog title="用户注册" :visible.sync="userDialog" width="35%" center :close-on-click-modal="false">
+      <el-tree
+        :data="data"
+        show-checkbox
+        node-key="id"
+        :default-expanded-keys="[2, 3]"
+        :default-checked-keys="[5]"
+        :props="defaultProps">
+      </el-tree>
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="registerUser('registerUserForm')">确 定</el-button>
+      <el-button @click="dialogFormVisible = false">取 消</el-button>
+    </div>
+    </el-dialog> -->
+    <!-- 菜单dialog -->
+    <el-dialog title="分配菜单" :visible.sync="assignMenuDialogVisible" width="30%" center :close-on-click-modal="false" :show-close="false">
+      <el-tree
+        ref="tree"
+        :data="menuData"
+        :show-checkbox=true
+        node-key="id"
+        :default-checked-keys="checkedMenuIds"
+        :props="defaultProps">
+      </el-tree>
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="saveAssignMenu">确 认</el-button>
+      <el-button @click="cancelAssignMenu">取 消</el-button>
+    </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -87,6 +133,16 @@
 export default {
   data() {
     return {
+      menuData: [{
+      id: 1,
+      label: ''}],
+      defaultProps: {
+        label: 'menuName'
+      },
+      row:{},
+      assignMenuDialogVisible: false,
+      // ----------分隔符---------
+      checkedMenuIds:[],
       roleTableData: [],
       multipleSelection: [],
       ids: [],
@@ -106,6 +162,41 @@ export default {
     this.fetchData();
   },
   methods: {
+    // 取消分配菜单
+    cancelAssignMenu(){
+      this.menuData = [];
+      this.checkedMenuIds = [];
+      this.row = {};
+      this.assignMenuDialogVisible = false;
+    },
+    // 分配菜单保存
+    async saveAssignMenu(){
+      console.log(this.$refs.tree.getCheckedKeys());
+      this.checkedMenuIds = this.$refs.tree.getCheckedKeys();
+      if(this.checkedMenuIds && this.checkedMenuIds.length > 0){
+        this.row.roleMenuIds = this.checkedMenuIds;
+      var data = await this.$axiosPost(ApiConst.role.saveAssignMenu,this.row);
+        if(data.code){
+          Message.success("操作成功");
+            
+        }
+      }
+      this.menuData = [];
+      this.checkedMenuIds = [];
+      this.row = {};
+      this.assignMenuDialogVisible = false;
+    },
+    // 分配菜单查询
+    async assignMenu(index, row){
+      var data = await this.$axiosPost(ApiConst.role.getMenuListByRoleId,row.id);
+      if(data.code){
+          this.assignMenuDialogVisible = true;
+          console.log(data,1111111111);
+          this.menuData = data.data.menus;
+          this.checkedMenuIds = data.data.roleMenuIds;
+          this.row = data.data;
+      }
+    },
     // 监听子组件传值
     handleCustomEvent(flag){
       console.log('监听用户管理子组件传值',flag)

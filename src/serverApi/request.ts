@@ -15,10 +15,15 @@ export function axiosGet(url:any,parameter={}) {
 }
 //post
 export function axiosPost(url:any,parameter={}) {
+  const token = localStorage.getItem("token");
   return axios({
     url: url,
     method:'post' ,
-    data: parameter
+    data: parameter,
+    headers: {
+      'token': token,
+      'Content-Type': "application/json;charset=UTF-8",
+    }
   })
 }
 //delete

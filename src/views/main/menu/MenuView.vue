@@ -3,32 +3,29 @@
     <!-- 搜索框 -->
     <div class="search-css">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" label-position="left">
-       <el-form-item label="姓名">
-      <el-input v-model="formInline.name" placeholder="请输入姓名"></el-input>
+       <el-form-item label="菜单名称">
+      <el-input v-model="formInline.menuName" placeholder="菜单名称"></el-input>
       </el-form-item>
-      <el-form-item label="手机号">
-      <el-input v-model="formInline.phone" placeholder="请输入手机号"></el-input>
-      </el-form-item>
-      <el-form-item label="地址">
-      <el-input v-model="formInline.address" placeholder="请输入地址"></el-input>
+      <el-form-item label="菜单路径">
+      <el-input v-model="formInline.menuUrl" placeholder="请输入菜单路径"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getUserPage">查询</el-button>
+        <el-button type="primary" @click="getMenuPage">查询</el-button>
       </el-form-item>
       </el-form>
     </div>
     
     <div class="menu-css">
-      <el-button type="success" @click="openAddUserDialog">新增</el-button>
+      <el-button type="success" @click="openAddMenuDialog">新增</el-button>
       <el-button type="mini" @click="deleteByIds">批量删除</el-button>
-      <add-user-dialog @customEvent="handleCustomEvent" ref="addUserDialog" v-model="dialogFormVisible"/> <!-- @customEvent="handleCustomEvent"监听子组件的自定义事件 -->
+      <add-menu-dialog @customEvent="handleCustomEvent" ref="addMenuDialog" v-model="dialogFormVisible"/> <!-- @customEvent="handleCustomEvent"监听子组件的自定义事件 -->
     </div>
 
     <!-- 列表显示区域 -->
     <div>
       <el-table
     ref="multipleTable"
-    :data="userTableData"
+    :data="menuTableData"
     tooltip-effect="dark"
     style="width: 100%"
     @selection-change="handleSelectionChange">
@@ -38,51 +35,49 @@
       align="center">
     </el-table-column>
     <el-table-column
-      prop="username"
-      label="用户名"
+      prop="menuName"
+      label="菜单名称"
       width="240"
       align="center">
     </el-table-column>
     <el-table-column
-      prop="name"
-      label="姓名"
+      prop="menuUrl"
+      label="菜单路径"
       width="240"
       align="center">
     </el-table-column>
     <el-table-column
-      prop="phone"
-      label="手机号"
-      width="240"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="lastLoginTime"
-      label="上次登陆时间"
+      prop="status"
+      label="状态"
       width="240"
       align="center">
       <template slot-scope="scope">
-          <span>{{dateFormat(scope.row.lastLoginTime) }}</span>
+        <el-switch
+          v-model="scope.row.status"
+          :active-value='1'
+          :inactive-value='-1'
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          @change="handleSwitchChange(scope.row, scope.row.status)">
+        </el-switch>
       </template>
     </el-table-column>
     <el-table-column
-      prop="address"
-      label="地址"
-      show-overflow-tooltip
+      prop="createTime"
+      label="创建时间"
+      width="240"
+      align="center">
+      <template slot-scope="scope">
+          <span>{{dateFormat(scope.row.createTime) }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="appSystemVersion"
+      label="系统版本"
+      width="240"
       align="center">
     </el-table-column>
-        <el-table-column label="权限配置" align="center">
-      <template slot-scope="scope">
-        <!-- <el-button
-        type="primary" plain round
-          size="mini"
-          @click="handleEdit(scope.$index, scope.row)">包含用户</el-button> -->
-        <el-button
-        type="primary" plain round
-          size="mini"
-          @click="assignRole(scope.$index, scope.row)">分配角色</el-button>
-      </template>
-      </el-table-column>
-    <el-table-column label="操作" width="150"
+    <el-table-column label="操作"
       align="center">
       <template slot-scope="scope">
         <el-button
@@ -109,40 +104,17 @@
       :total="total">
     </el-pagination>
     </div>
-    <el-dialog title="分配角色" :visible.sync="assignRoleDialogVisible" width="30%" center :close-on-click-modal="false" :show-close="false">
-      <el-tree
-        ref="tree"
-        :data="roleData"
-        :show-checkbox=true
-        node-key="id"
-        :default-checked-keys="checkedRoleIds"
-        :props="defaultProps">
-      </el-tree>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="saveAssignRole">确 认</el-button>
-      <el-button @click="cancelAssignRole">取 消</el-button>
-    </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
   import ApiConst from '@/serverApi/api';
   import { Message } from 'element-ui';
-  import AddUserDialog from "@/components/AddUserDialog.vue";
+  import AddMenuDialog from "@/components/AddMenuDialog.vue";
 export default {
   data() {
     return {
-      roleData: [{
-      id: 1,
-      label: ''}],
-      defaultProps: {
-        label: 'roleName'
-      },
-      row:{},
-      assignRoleDialogVisible: false,
-      // -------分隔符-------
-      userTableData: [],
+      menuTableData: [],
       multipleSelection: [],
       ids: [],
       dialogFormVisible: false,
@@ -150,7 +122,7 @@ export default {
       pageSize: 10, // 每页显示的数量
       total: 0, // 总条目数
       formInline: {
-        user: '',
+        menu: '',
         phone: '',
         address: ''
       }
@@ -161,49 +133,20 @@ export default {
     this.fetchData();
   },
   methods: {
-    // 取消分配角色
-    cancelAssignRole(){
-      this.roleData = [];
-      this.checkedRoleIds = [];
-      this.row = {};
-      this.assignRoleDialogVisible = false;
-    },
-    // 分配角色保存
-    async saveAssignRole(){
-      console.log(this.$refs.tree.getCheckedKeys());
-      this.checkedRoleIds = this.$refs.tree.getCheckedKeys();
-      if(this.checkedRoleIds && this.checkedRoleIds.length > 0){
-        if(this.checkedRoleIds.length > 1){
-          Message.error("sorry，只能选择一个角色！");
-          return;
-        }
-        this.row.userRoleIds = this.checkedRoleIds;
-        var data = await this.$axiosPost(ApiConst.user.saveAssignRole,this.row);
-        if(data.code){
-          Message.success("操作成功");  
-        }
-      }
-      this.roleData = [];
-      this.checkedRoleIds = [];
-      this.row = {};
-      this.assignRoleDialogVisible = false;
-    },
-    // 分配角色查询
-    async assignRole(index, row){
-      var data = await this.$axiosPost(ApiConst.user.getRoleListByUserId,row.id);
-      if(data.code){
-          this.assignRoleDialogVisible = true;
-          console.log(data,1111111111);
-          this.roleData = data.data.roles;
-          this.checkedRoleIds = data.data.userRoleIds;
-          this.row = data.data;
-      }
+    // 监听switch滑块组件
+    async handleSwitchChange(val1,val2){
+      console.log(val1,val2);
+      val1.status = val2;
+      var data = await this.$axiosPost(ApiConst.menu.save,val1);
+          if(data.code){
+            Message.success("操作成功！");
+          }
     },
       // 监听子组件传值
       handleCustomEvent(flag){
         console.log('监听用户管理子组件传值',flag)
         if(flag){
-          this.getUserPage();
+          this.getMenuPage();
         }
       },
       async deleteByIds(){
@@ -213,8 +156,8 @@ export default {
             type: 'warning'
           }).then(async ()=>{
             this.multipleSelection.forEach(item => {this.ids.push(item.id)});
-          var data = await this.$axiosPost(ApiConst.user.delete,this.ids);
-          console.log('getUserPage',data);
+          var data = await this.$axiosPost(ApiConst.menu.delete,this.ids);
+          console.log('getMenuPage',data);
           if(data.code){
             Message.success("操作成功！");
             this.fetchData();
@@ -227,11 +170,10 @@ export default {
       }else return '';
       },
       async handleEdit(index, row) {
-        this.$refs.addUserDialog.dialogFormVisible = true;
-        this.$refs.addUserDialog.title = "编辑用户";
-        this.$refs.addUserDialog.usernameInput = true;
-        row.secondPassword = row.password;
-        this.$refs.addUserDialog.registerUserForm = Object.assign({},row);
+        this.$refs.addMenuDialog.dialogFormVisible = true;
+        this.$refs.addMenuDialog.title = "编辑菜单";
+        // this.$refs.addMenuDialog.menuNameInput = true;
+        this.$refs.addMenuDialog.addMenuForm = Object.assign({},row);
         console.log(index, row);
       },
       async handleDelete(index, row) {
@@ -242,8 +184,8 @@ export default {
         }).then(async ()=>{
           this.ids = [];
           this.ids.push(row.id);
-          var data = await this.$axiosPost(ApiConst.user.delete,this.ids);
-          console.log('getUserPage',data);
+          var data = await this.$axiosPost(ApiConst.menu.delete,this.ids);
+          console.log('getMenuPage',data);
           if(data.code){
             Message.success("操作成功！");
             this.fetchData();
@@ -255,13 +197,13 @@ export default {
         console.log(this.multipleSelection);
     },
 
-    openAddUserDialog(){
-      this.$refs.addUserDialog.dialogFormVisible = true;
-      this.$refs.addUserDialog.title = "新增用户";
+    openAddMenuDialog(){
+      this.$refs.addMenuDialog.dialogFormVisible = true;
+      this.$refs.addMenuDialog.title = "菜单用户";
     },
     // 从服务器获取数据的函数
     fetchData() {
-      this.getUserPage();
+      this.getMenuPage();
     },
     // 处理每页显示数量变化
     handleSizeChange(val) {
@@ -277,14 +219,14 @@ export default {
     updatePaginatedList() {
       this.formInline.pageNum = this.pageNum;
       this.formInline.pageSize = this.pageSize;
-      this.getUserPage();
+      this.getMenuPage();
     },
-    async getUserPage() {
-        var data = await this.$axiosPost(ApiConst.user.getPage,this.formInline);
-        console.log('getUserPage',data);
+    async getMenuPage() {
+        var data = await this.$axiosPost(ApiConst.menu.getPage,this.formInline);
+        console.log('getMenuPage',data);
         if(data.code){
           // Message.success("操作成功！");
-          this.userTableData = data.data.list;
+          this.menuTableData = data.data.list;
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
@@ -292,7 +234,7 @@ export default {
     }
   },
   components: {
-    AddUserDialog,
+    AddMenuDialog,
   },
 };
 </script>

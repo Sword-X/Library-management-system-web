@@ -66,8 +66,14 @@ axiosInstance.interceptors.response.use(
     console.log("333333333333333")
     debugger
     // return Promise.reject(error);
-    handleErrorData(error.response.data);
-    return error.response;
+    if(error.response){
+      handleErrorData(error.response.data);
+      return error.response;
+    }else{
+      Message.error("网络出了点小差，请稍后再试。。。");
+      return;
+    }
+    
   }
 );
 //对错误信息的处理函数

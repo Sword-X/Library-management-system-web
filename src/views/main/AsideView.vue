@@ -15,7 +15,7 @@
             </el-menu-item>
             <el-menu-item index="/bookStore">
                 <i class="el-icon-reading"></i>
-                <span slot="title">藏经阁</span>
+                <span slot="title">藏书阁</span>
             </el-menu-item>
             <el-submenu index="/book">
                 <template slot="title">
@@ -34,6 +34,10 @@
             <el-menu-item index="/user">
                 <i class="el-icon-s-custom"></i>
                 <span slot="title">用户管理</span>
+            </el-menu-item>
+            <el-menu-item index="/menu">
+                <i class="el-icon-s-custom"></i>
+                <span slot="title">菜单管理</span>
             </el-menu-item>
             <el-menu-item index="/log">
                 <i class="el-icon-lock"></i>
