@@ -27,6 +27,10 @@
                     <el-menu-item index="4-2">选项2</el-menu-item>
                 </el-menu-item-group>
             </el-submenu>
+            <el-menu-item index="/bookCategory">
+                <i class="el-icon-s-cooperation"></i>
+                <span slot="title">图书分类</span>
+            </el-menu-item>
             <el-menu-item index="/role">
                 <i class="el-icon-s-cooperation"></i>
                 <span slot="title">角色管理</span>
@@ -38,6 +42,14 @@
             <el-menu-item index="/menu">
                 <i class="el-icon-s-custom"></i>
                 <span slot="title">菜单管理</span>
+            </el-menu-item>
+            <el-menu-item index="/api">
+                <i class="el-icon-s-custom"></i>
+                <span slot="title">接口信息</span>
+            </el-menu-item>
+            <el-menu-item index="/appConfig">
+                <i class="el-icon-s-custom"></i>
+                <span slot="title">应用配置</span>
             </el-menu-item>
             <el-menu-item index="/log">
                 <i class="el-icon-lock"></i>

@@ -1,15 +1,15 @@
 <template>
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="35%" center :close-on-click-modal="false">
-        <el-form :model="addMenuForm" :rules="addMenuRules" ref="addMenuForm">
-        <el-form-item label="菜单名称：" :label-width="formLabelWidth" prop="menuName">
-        <el-input v-model="addMenuForm.menuName" placeholder="请输入菜单名称" :disabled="menuNameInput"></el-input>
+        <el-form :model="addBookCategoryForm" :rules="addBookCategoryRules" ref="addBookCategoryForm">
+        <el-form-item label="分类名称：" :label-width="formLabelWidth" prop="name">
+        <el-input v-model="addBookCategoryForm.name" placeholder="请输入分类名称"></el-input>
         </el-form-item>
-        <el-form-item label="菜单路径：" :label-width="formLabelWidth" prop="menuUrl">
-        <el-input v-model="addMenuForm.menuUrl" placeholder="请输入菜单路径"></el-input>
+        <el-form-item label="描述信息：" :label-width="formLabelWidth" prop="description">
+        <el-input v-model="addBookCategoryForm.description" placeholder="请输入描述信息"></el-input>
         </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addMenu('addMenuForm')">确 定</el-button>
+        <el-button type="primary" @click="addBookCategory('addBookCategoryForm')">确 定</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         </div>
     </el-dialog>
@@ -21,18 +21,18 @@
     export default {
     data() {
       return {
-        addMenuRules: {
-          menuUrl: [
-            { required: true, message: '请输入菜单路径', trigger: 'blur' }
-          ],
-          menuName: [
-            { required: true, message: '请输入菜单名称', trigger: 'blur' }
+        addBookCategoryRules: {
+          // bookCategoryUrl: [
+          //   { required: true, message: '请输入菜单路径', trigger: 'blur' }
+          // ],
+          name: [
+            { required: true, message: '请输入分类名称', trigger: 'blur' }
           ],
         },
         dialogFormVisible: false,
-        addMenuForm: {},
+        addBookCategoryForm: {},
         title: "新增菜单",
-        menuMenuInput: false,
+        bookCategoryBookCategoryInput: false,
         formLabelWidth: '100px'
       }
     },
@@ -43,14 +43,14 @@
         handleClose() {
             this.dialogFormVisible = false; // 关闭对话框时设置为false
         },
-      addMenu(formName){
+      addBookCategory(formName){
         this.$refs[formName].validate(async (valid) => {
           if (valid) {
-            var data = await this.$axiosPost(ApiConst.menu.save,this.addMenuForm);
+            var data = await this.$axiosPost(ApiConst.bookCategory.save,this.addBookCategoryForm);
             if(data.code){
               this.$refs[formName].resetFields();
               this.dialogFormVisible = false;
-              this.addMenuForm = {};
+              this.addBookCategoryForm = {};
               Message.success("操作成功！");
               this.sendMessage2Parent();
             }

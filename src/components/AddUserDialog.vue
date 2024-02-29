@@ -73,15 +73,7 @@
           ]
         },
         dialogFormVisible: false,
-        registerUserForm: {
-          id: '',
-          username: '',
-          password: '',
-          secondPassword: '',
-          name: '',
-          phone: '',
-          address: ''
-        },
+        registerUserForm: {},
         title: "用户新增",
         usernameInput: false,
         formLabelWidth: '100px'
@@ -101,6 +93,7 @@
             if(data.code){
               this.$refs[formName].resetFields();
               this.dialogFormVisible = false;
+              this.registerUserForm = {};
               Message.success("操作成功！");
               this.sendMessage2Parent();
             }

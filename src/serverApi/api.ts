@@ -27,7 +27,11 @@ const ApiConst = {
         // 根据角色查询菜单
         getMenuListByRoleId: '/api/lms/role/getMenuListByRoleId',
         // 根据角色分配菜单
-        saveAssignMenu: '/api/lms/role/saveAssignMenu'
+        saveAssignMenu: '/api/lms/role/saveAssignMenu',
+        // 根据角色获取用户
+        getIncludUsers: '/api/lms/role/getIncludUsers',
+        // 删除包含的用户
+        deleteIncludUser: '/api/lms/role/deleteIncludUser'
     },
     // 菜单管理
     menu: {
@@ -37,7 +41,48 @@ const ApiConst = {
         save: '/api/lms/menu/save',
         // 删除
         delete: '/api/lms/menu/delete',
-    }
+    },
+    // 菜单管理
+    log: {
+        // 分页
+        getPage: '/api/lms/log/getPage'
+    },
+    // 接口信息管理
+    api: {
+        // 分页
+        getPage: '/api/lms/api/getPage',
+        // 新增
+        save: '/api/lms/api/save',
+        // 删除
+        delete: '/api/lms/api/delete',
+    },
+    // 藏书阁管理
+    bookStore: {
+        // 分页
+        getPage: '/api/lms/bookStore/getPage',
+        // 新增
+        save: '/api/lms/bookStore/save',
+        // 删除
+        delete: '/api/lms/bookStore/delete',
+    },
+    // 借阅信息
+    brrow: {
+        // 分页
+        getPage: '/api/lms/brrow/getPage',
+        // 新增
+        save: '/api/lms/brrow/save',
+        // 删除
+        delete: '/api/lms/brrow/delete',
+    },
+    // 图书分类管理
+    bookCategory: {
+        // 分页
+        getPage: '/api/lms/bookCategory/getPage',
+        // 新增
+        save: '/api/lms/bookCategory/save',
+        // 删除
+        delete: '/api/lms/bookCategory/delete',
+    },
 
 }
 

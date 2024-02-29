@@ -72,10 +72,6 @@
     </el-table-column>
         <el-table-column label="权限配置" align="center">
       <template slot-scope="scope">
-        <!-- <el-button
-        type="primary" plain round
-          size="mini"
-          @click="handleEdit(scope.$index, scope.row)">包含用户</el-button> -->
         <el-button
         type="primary" plain round
           size="mini"
@@ -219,7 +215,7 @@ export default {
             Message.success("操作成功！");
             this.fetchData();
           }
-        })
+        }).catch((item)=>{console.log(item)});
       },
       dateFormat(dateStr){
       if(dateStr){
@@ -248,7 +244,7 @@ export default {
             Message.success("操作成功！");
             this.fetchData();
           }
-        })
+        }).catch((item)=>{console.log(item)});
       },
     handleSelectionChange(val) {
         this.multipleSelection = val;

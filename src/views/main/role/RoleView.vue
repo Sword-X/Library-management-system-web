@@ -57,10 +57,10 @@
     </el-table-column>
     <el-table-column label="权限配置" align="center">
       <template slot-scope="scope">
-        <!-- <el-button
+        <el-button
         type="primary" plain round
           size="mini"
-          @click="handleEdit(scope.$index, scope.row)">包含用户</el-button> -->
+          @click="getIncludUsers(scope.$index, scope.row)">包含用户</el-button>
         <el-button
         type="primary" plain round
           size="mini"
@@ -94,20 +94,71 @@
     </el-pagination>
     </div>
     <!-- 用户dialog -->
-    <!-- <el-dialog title="用户注册" :visible.sync="userDialog" width="35%" center :close-on-click-modal="false">
-      <el-tree
-        :data="data"
-        show-checkbox
-        node-key="id"
-        :default-expanded-keys="[2, 3]"
-        :default-checked-keys="[5]"
-        :props="defaultProps">
-      </el-tree>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="registerUser('registerUserForm')">确 定</el-button>
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
+    <el-dialog title="包含用户" :visible.sync="assignUserDialogVisible" width="55%" center :close-on-click-modal="false">
+      <div class="search-css">
+      <el-form :inline="true" :model="userFormInline" class="demo-form-inline" label-position="left">
+        <el-form-item label="姓名">
+        <el-input v-model="userFormInline.name" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item>
+        <el-button type="primary" @click="getIncludUsersByParam">查询</el-button>
+      </el-form-item>
+      </el-form>
     </div>
-    </el-dialog> -->
+      <div>
+      <el-table
+    :data="user"
+    tooltip-effect="dark"
+    style="width: 100%">
+    <el-table-column
+      prop="username"
+      label="用户名"
+      width="240"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      prop="name"
+      label="姓名"
+      width="120"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      prop="phone"
+      label="手机号"
+      width="240"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      prop="address"
+      label="地址"
+      show-overflow-tooltip
+      align="center">
+    </el-table-column>
+    <el-table-column label="操作" width="120"
+      align="center">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          type="danger"
+          @click="deleteIncludUser(scope.$index, scope.row)">删除</el-button>
+      </template>
+      </el-table-column>
+      </el-table>
+    </div>
+    <!-- 用户dialog分页组件 -->
+    <div>
+    <el-pagination
+      align="center"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="userPage.pageNum"
+      :page-sizes="[10]"
+      :page-size="userPage.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="userPage.total">
+    </el-pagination>
+    </div>
+    </el-dialog>
     <!-- 菜单dialog -->
     <el-dialog title="分配菜单" :visible.sync="assignMenuDialogVisible" width="30%" center :close-on-click-modal="false" :show-close="false">
       <el-tree
@@ -133,6 +184,13 @@
 export default {
   data() {
     return {
+      //包含用户
+      assignUserDialogVisible: false,
+      user: {},
+      userFormInline: {},
+      userPage:{},
+      userRow:{},
+      // 包含菜单
       menuData: [{
       id: 1,
       label: ''}],
@@ -162,6 +220,46 @@ export default {
     this.fetchData();
   },
   methods: {
+    async deleteIncludUser(index,row){
+      console.log(row);
+      row.roleId = this.userRow.id;
+      var data = await this.$axiosPost(ApiConst.role.deleteIncludUser,row);
+      if(data.code){
+        Message.success("操作成功！");
+        this.getIncludUsersByParam();
+      }
+    },
+    //包含用户条件查询
+    async getIncludUsersByParam(){
+      this.userFormInline.roleId = this.userRow.id;
+      var data = await this.$axiosPost(ApiConst.role.getIncludUsers,this.userFormInline);
+      console.log('getIncludUsersByParam',data);
+        if(data.code){
+          // Message.success("操作成功！");
+          this.user = data.data.list;
+          this.userPage.pageSize = data.data.pageSize;
+          this.userPage.pageNum = data.data.pageNum;
+          this.userPage.total = data.data.total;
+          // this.userRow = row;
+        }
+    },
+    //包含用户
+    async getIncludUsers(index,row){
+      console.log(row);
+      this.userFormInline = {};
+      this.userFormInline.roleId = row.id;
+      this.assignUserDialogVisible = true;
+      var data = await this.$axiosPost(ApiConst.role.getIncludUsers,this.userFormInline);
+      console.log('getRolePage',data);
+        if(data.code){
+          // Message.success("操作成功！");
+          this.user = data.data.list;
+          this.userPage.pageSize = data.data.pageSize;
+          this.userPage.pageNum = data.data.pageNum;
+          this.userPage.total = data.data.total;
+          this.userRow = row;
+        }
+    },
     // 取消分配菜单
     cancelAssignMenu(){
       this.menuData = [];
@@ -177,8 +275,7 @@ export default {
         this.row.roleMenuIds = this.checkedMenuIds;
       var data = await this.$axiosPost(ApiConst.role.saveAssignMenu,this.row);
         if(data.code){
-          Message.success("操作成功");
-            
+          Message.success("操作成功");        
         }
       }
       this.menuData = [];
@@ -217,7 +314,7 @@ export default {
           Message.success("操作成功！");
           this.fetchData();
         }
-      })
+      }).catch((item)=>{console.log(item)});
     },
       dateFormat(dateStr){
         return new Date(dateStr).toLocaleString().replaceAll("/","-");
@@ -243,7 +340,7 @@ export default {
             Message.success("操作成功！");
             this.fetchData();
           }
-        })
+        }).catch((item)=>{console.log(item)});
       },
     handleSelectionChange(val) {
         this.multipleSelection = val;

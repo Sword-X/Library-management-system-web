@@ -51,9 +51,17 @@ const routes: Array<RouteConfig> = [
         name: 'bookStore',
         component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BookStoreView.vue')
       },{
+        path: '/api',
+        name: 'api',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/api/ApiView.vue')
+      },{
         path: '/log',
         name: 'log',
         component: () => import(/* webpackChunkName: "about" */ '../views/main/log/LogView.vue')
+      },{
+        path: '/bookCategory',
+        name: 'bookCategory',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BookCategoryView.vue')
       },{
         path: '/role',
         name: 'role',
@@ -63,6 +71,10 @@ const routes: Array<RouteConfig> = [
         path: '/menu',
         name: 'menu',
         component: () => import(/* webpackChunkName: "about" */ '../views/main/menu/MenuView.vue')
+      },{
+        path: '/appConfig',
+        name: 'appConfig',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/appConfig/AppConfigView.vue')
       }
     ]
   }

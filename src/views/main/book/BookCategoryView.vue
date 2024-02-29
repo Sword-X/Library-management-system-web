@@ -3,29 +3,26 @@
     <!-- 搜索框 -->
     <div class="search-css">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" label-position="left">
-       <el-form-item label="菜单名称">
-      <el-input v-model="formInline.menuName" placeholder="请输入菜单名称"></el-input>
-      </el-form-item>
-      <el-form-item label="菜单路径">
-      <el-input v-model="formInline.menuUrl" placeholder="请输入菜单路径"></el-input>
+       <el-form-item label="分类名称">
+      <el-input v-model="formInline.name" placeholder="请输入分类名称"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getMenuPage">查询</el-button>
+        <el-button type="primary" @click="getBookCategoryPage">查询</el-button>
       </el-form-item>
       </el-form>
     </div>
     
-    <div class="menu-css">
-      <el-button type="success" @click="openAddMenuDialog">新增</el-button>
+    <div class="bookCategory-css">
+      <el-button type="success" @click="openAddBookCategoryDialog">新增</el-button>
       <el-button type="mini" @click="deleteByIds">批量删除</el-button>
-      <add-menu-dialog @customEvent="handleCustomEvent" ref="addMenuDialog" v-model="dialogFormVisible"/> <!-- @customEvent="handleCustomEvent"监听子组件的自定义事件 -->
+      <add-bookCategory-dialog @customEvent="handleCustomEvent" ref="addBookCategoryDialog" v-model="dialogFormVisible"/> <!-- @customEvent="handleCustomEvent"监听子组件的自定义事件 -->
     </div>
 
     <!-- 列表显示区域 -->
     <div>
       <el-table
     ref="multipleTable"
-    :data="menuTableData"
+    :data="bookCategoryTableData"
     tooltip-effect="dark"
     style="width: 100%"
     @selection-change="handleSelectionChange">
@@ -35,47 +32,22 @@
       align="center">
     </el-table-column>
     <el-table-column
-      prop="menuName"
-      label="菜单名称"
-      width="240"
+      prop="name"
+      label="分类名称"
       align="center">
     </el-table-column>
     <el-table-column
-      prop="menuUrl"
-      label="菜单路径"
-      width="240"
+      prop="description"
+      label="描述信息"
       align="center">
-    </el-table-column>
-    <el-table-column
-      prop="status"
-      label="状态"
-      width="240"
-      align="center">
-      <template slot-scope="scope">
-        <el-switch
-          v-model="scope.row.status"
-          :active-value='1'
-          :inactive-value='-1'
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          @change="handleSwitchChange(scope.row, scope.row.status)">
-        </el-switch>
-      </template>
     </el-table-column>
     <el-table-column
       prop="createTime"
       label="创建时间"
-      width="240"
       align="center">
       <template slot-scope="scope">
           <span>{{dateFormat(scope.row.createTime) }}</span>
       </template>
-    </el-table-column>
-    <el-table-column
-      prop="appSystemVersion"
-      label="系统版本"
-      width="240"
-      align="center">
     </el-table-column>
     <el-table-column label="操作"
       align="center">
@@ -110,11 +82,11 @@
 <script>
   import ApiConst from '@/serverApi/api';
   import { Message } from 'element-ui';
-  import AddMenuDialog from "@/components/AddMenuDialog.vue";
+  import AddBookCategoryDialog from "@/components/AddBookCategoryDialog.vue";
 export default {
   data() {
     return {
-      menuTableData: [],
+      bookCategoryTableData: [],
       multipleSelection: [],
       ids: [],
       dialogFormVisible: false,
@@ -122,7 +94,7 @@ export default {
       pageSize: 10, // 每页显示的数量
       total: 0, // 总条目数
       formInline: {
-        menu: '',
+        bookCategory: '',
         phone: '',
         address: ''
       }
@@ -137,7 +109,7 @@ export default {
     async handleSwitchChange(val1,val2){
       console.log(val1,val2);
       val1.status = val2;
-      var data = await this.$axiosPost(ApiConst.menu.save,val1);
+      var data = await this.$axiosPost(ApiConst.bookCategory.save,val1);
           if(data.code){
             Message.success("操作成功！");
           }
@@ -146,7 +118,7 @@ export default {
       handleCustomEvent(flag){
         console.log('监听用户管理子组件传值',flag)
         if(flag){
-          this.getMenuPage();
+          this.getBookCategoryPage();
         }
       },
       async deleteByIds(){
@@ -156,8 +128,8 @@ export default {
             type: 'warning'
           }).then(async ()=>{
             this.multipleSelection.forEach(item => {this.ids.push(item.id)});
-          var data = await this.$axiosPost(ApiConst.menu.delete,this.ids);
-          console.log('getMenuPage',data);
+          var data = await this.$axiosPost(ApiConst.bookCategory.delete,this.ids);
+          console.log('getBookCategoryPage',data);
           if(data.code){
             Message.success("操作成功！");
             this.fetchData();
@@ -170,10 +142,10 @@ export default {
       }else return '';
       },
       async handleEdit(index, row) {
-        this.$refs.addMenuDialog.dialogFormVisible = true;
-        this.$refs.addMenuDialog.title = "编辑菜单";
-        // this.$refs.addMenuDialog.menuNameInput = true;
-        this.$refs.addMenuDialog.addMenuForm = Object.assign({},row);
+        this.$refs.addBookCategoryDialog.dialogFormVisible = true;
+        this.$refs.addBookCategoryDialog.title = "分类编辑";
+        // this.$refs.addBookCategoryDialog.bookCategoryNameInput = true;
+        this.$refs.addBookCategoryDialog.addBookCategoryForm = Object.assign({},row);
         console.log(index, row);
       },
       async handleDelete(index, row) {
@@ -184,8 +156,8 @@ export default {
         }).then(async ()=>{
           this.ids = [];
           this.ids.push(row.id);
-          var data = await this.$axiosPost(ApiConst.menu.delete,this.ids);
-          console.log('getMenuPage',data);
+          var data = await this.$axiosPost(ApiConst.bookCategory.delete,this.ids);
+          console.log('getBookCategoryPage',data);
           if(data.code){
             Message.success("操作成功！");
             this.fetchData();
@@ -197,13 +169,13 @@ export default {
         console.log(this.multipleSelection);
     },
 
-    openAddMenuDialog(){
-      this.$refs.addMenuDialog.dialogFormVisible = true;
-      this.$refs.addMenuDialog.title = "新增菜单";
+    openAddBookCategoryDialog(){
+      this.$refs.addBookCategoryDialog.dialogFormVisible = true;
+      this.$refs.addBookCategoryDialog.title = "分类新增";
     },
     // 从服务器获取数据的函数
     fetchData() {
-      this.getMenuPage();
+      this.getBookCategoryPage();
     },
     // 处理每页显示数量变化
     handleSizeChange(val) {
@@ -219,14 +191,14 @@ export default {
     updatePaginatedList() {
       this.formInline.pageNum = this.pageNum;
       this.formInline.pageSize = this.pageSize;
-      this.getMenuPage();
+      this.getBookCategoryPage();
     },
-    async getMenuPage() {
-        var data = await this.$axiosPost(ApiConst.menu.getPage,this.formInline);
-        console.log('getMenuPage',data);
+    async getBookCategoryPage() {
+        var data = await this.$axiosPost(ApiConst.bookCategory.getPage,this.formInline);
+        console.log('getBookCategoryPage',data);
         if(data.code){
           // Message.success("操作成功！");
-          this.menuTableData = data.data.list;
+          this.bookCategoryTableData = data.data.list;
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
@@ -234,7 +206,7 @@ export default {
     }
   },
   components: {
-    AddMenuDialog,
+    AddBookCategoryDialog,
   },
 };
 </script>
@@ -244,7 +216,7 @@ export default {
     display: flex; /* 设置display属性为flex */
     align-items: left; /* 水平居中对齐 */
   }
-  .menu-css {
+  .bookCategory-css {
     display: flex; /* 设置display属性为flex */
     align-items: left; /* 水平居中对齐 */
   }

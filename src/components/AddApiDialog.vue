@@ -1,15 +1,15 @@
 <template>
-    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="35%" center :close-on-click-modal="false" >
-        <el-form :model="addRoleForm" :rules="addRoleRules" ref="addRoleForm">
-        <el-form-item label="角色编码：" :label-width="formLabelWidth" prop="roleCode">
-        <el-input v-model="addRoleForm.roleCode" placeholder="请输入角色编码" :disabled="roleRoleInput"></el-input>
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="25%" center :close-on-click-modal="false">
+        <el-form :model="addApiForm" :rules="addApiRules" ref="addApiForm">
+          <el-form-item label="接口路径：" :label-width="formLabelWidth" prop="apiUrl">
+        <el-input v-model="addApiForm.apiUrl" placeholder="请输入接口路径"></el-input>
         </el-form-item>
-        <el-form-item label="角色名称：" :label-width="formLabelWidth" prop="roleName">
-        <el-input type="name" v-model="addRoleForm.roleName" placeholder="请输入角色名称"></el-input>
+        <el-form-item label="接口信息：" :label-width="formLabelWidth" prop="apiInfo">
+        <el-input v-model="addApiForm.apiInfo" placeholder="请输入接口信息"></el-input>
         </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addRole('addRoleForm')">确 定</el-button>
+        <el-button type="primary" @click="addApi('addApiForm')">确 定</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         </div>
     </el-dialog>
@@ -21,18 +21,18 @@
     export default {
     data() {
       return {
-        addRoleRules: {
-          roleCode: [
-            { required: true, message: '请输入角色编码', trigger: 'blur' }
+        addApiRules: {
+          apiUrl: [
+            { required: true, message: '请输入接口路径', trigger: 'blur' }
           ],
-          roleName: [
-            { required: true, message: '请输入角色名称', trigger: 'blur' }
+          apiInfo: [
+            { required: true, message: '请输入接口信息', trigger: 'blur' }
           ],
         },
         dialogFormVisible: false,
-        addRoleForm: {},
-        title: "新增角色",
-        roleRoleInput: false,
+        addApiForm: {},
+        title: "新增接口",
+        apiApiInput: false,
         formLabelWidth: '100px'
       }
     },
@@ -43,14 +43,14 @@
         handleClose() {
             this.dialogFormVisible = false; // 关闭对话框时设置为false
         },
-      addRole(formName){
+      addApi(formName){
         this.$refs[formName].validate(async (valid) => {
           if (valid) {
-            var data = await this.$axiosPost(ApiConst.role.save,this.addRoleForm);
+            var data = await this.$axiosPost(ApiConst.api.save,this.addApiForm);
             if(data.code){
               this.$refs[formName].resetFields();
               this.dialogFormVisible = false;
-              this.addRoleForm = {};
+              this.addApiForm = {};
               Message.success("操作成功！");
               this.sendMessage2Parent();
             }
@@ -65,5 +65,4 @@
       }
     }
   }
-
 </script>
