@@ -27,6 +27,7 @@
     <!-- 列表显示区域 -->
     <div>
       <el-table
+    v-loading="loading"
     ref="multipleTable"
     :data="userTableData"
     tooltip-effect="dark"
@@ -129,6 +130,7 @@
 export default {
   data() {
     return {
+      loading: true,
       roleData: [{
       id: 1,
       label: ''}],
@@ -276,6 +278,7 @@ export default {
       this.getUserPage();
     },
     async getUserPage() {
+      this.loading = true;
         var data = await this.$axiosPost(ApiConst.user.getPage,this.formInline);
         console.log('getUserPage',data);
         if(data.code){
@@ -284,6 +287,7 @@ export default {
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
+          this.loading = false;
         }
     }
   },

@@ -24,6 +24,7 @@
     <!-- 列表显示区域 -->
     <div>
       <el-table
+    v-loading="loading"
     ref="multipleTable"
     :data="apiTableData"
     tooltip-effect="dark"
@@ -89,6 +90,7 @@
 export default {
   data() {
     return {
+      loading: true,
       apiTableData: [],
       multipleSelection: [],
       ids: [],
@@ -188,6 +190,7 @@ export default {
       this.getApiPage();
     },
     async getApiPage() {
+        this.loading = true;
         var data = await this.$axiosPost(ApiConst.api.getPage,this.formInline);
         console.log('getApiPage',data);
         if(data.code){
@@ -196,6 +199,7 @@ export default {
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
+          this.loading = false;
         }
     }
   },

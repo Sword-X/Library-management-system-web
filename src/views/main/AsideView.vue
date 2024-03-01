@@ -49,7 +49,7 @@
             </el-menu-item>
             <el-menu-item index="/appConfig">
                 <i class="el-icon-s-custom"></i>
-                <span slot="title">应用配置</span>
+                <span slot="title">系统配置</span>
             </el-menu-item>
             <el-menu-item index="/log">
                 <i class="el-icon-lock"></i>

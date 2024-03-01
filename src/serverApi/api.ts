@@ -42,10 +42,17 @@ const ApiConst = {
         // 删除
         delete: '/api/lms/menu/delete',
     },
-    // 菜单管理
+    // 审计日志
     log: {
         // 分页
         getPage: '/api/lms/log/getPage'
+    },
+    // 系统配置
+    appConfig: {
+        // 查询
+        get: '/api/lms/app/get',
+        // 修改
+        save: '/api/lms/app/save'
     },
     // 接口信息管理
     api: {
@@ -66,13 +73,9 @@ const ApiConst = {
         delete: '/api/lms/bookStore/delete',
     },
     // 借阅信息
-    brrow: {
+    borrow: {
         // 分页
-        getPage: '/api/lms/brrow/getPage',
-        // 新增
-        save: '/api/lms/brrow/save',
-        // 删除
-        delete: '/api/lms/brrow/delete',
+        getPage: '/api/lms/borrow/getPage'
     },
     // 图书分类管理
     bookCategory: {

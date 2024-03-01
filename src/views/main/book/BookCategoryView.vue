@@ -21,6 +21,7 @@
     <!-- 列表显示区域 -->
     <div>
       <el-table
+    v-loading="loading"
     ref="multipleTable"
     :data="bookCategoryTableData"
     tooltip-effect="dark"
@@ -86,6 +87,7 @@
 export default {
   data() {
     return {
+      loading: true,
       bookCategoryTableData: [],
       multipleSelection: [],
       ids: [],
@@ -194,6 +196,7 @@ export default {
       this.getBookCategoryPage();
     },
     async getBookCategoryPage() {
+      this.loading = true;
         var data = await this.$axiosPost(ApiConst.bookCategory.getPage,this.formInline);
         console.log('getBookCategoryPage',data);
         if(data.code){
@@ -202,6 +205,7 @@ export default {
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
+          this.loading = false;
         }
     }
   },

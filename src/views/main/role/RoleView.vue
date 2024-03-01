@@ -24,6 +24,7 @@
     <!-- 列表显示区域 -->
     <div>
       <el-table
+    v-loading="loading"
     ref="multipleTable"
     :data="roleTableData"
     tooltip-effect="dark"
@@ -184,6 +185,7 @@
 export default {
   data() {
     return {
+      loading: true,
       //包含用户
       assignUserDialogVisible: false,
       user: {},
@@ -372,6 +374,7 @@ export default {
       this.getRolePage();
     },
     async getRolePage() {
+      this.loading = true;
         var data = await this.$axiosPost(ApiConst.role.getPage,this.formInline);
         console.log('getRolePage',data);
         if(data.code){
@@ -380,6 +383,7 @@ export default {
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
+          this.loading = false;
         }
     }
   },

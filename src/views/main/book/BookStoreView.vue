@@ -33,6 +33,7 @@
     <!-- 列表显示区域 -->
     <div>
       <el-table
+    v-loading="loading"
     ref="multipleTable"
     :data="bookStoreTableData"
     tooltip-effect="dark"
@@ -76,11 +77,6 @@
     <el-table-column
       prop="description"
       label="描述"
-      align="center">
-    </el-table-column>
-    <el-table-column
-      prop="author"
-      label="作者"
       align="center">
     </el-table-column>
     <el-table-column
@@ -128,6 +124,7 @@
 export default {
   data() {
     return {
+      loading: true,
       bookStoreTableData: [],
       multipleSelection: [],
       ids: [],
@@ -236,6 +233,7 @@ export default {
       this.getBookStorePage();
     },
     async getBookStorePage() {
+      this.loading = true;
         var data = await this.$axiosPost(ApiConst.bookStore.getPage,this.formInline);
         console.log('getBookStorePage',data);
         if(data.code){
@@ -244,6 +242,7 @@ export default {
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
+          this.loading = false;
         }
     }
   },

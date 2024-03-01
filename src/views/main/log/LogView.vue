@@ -34,6 +34,7 @@
     <!-- 列表显示区域 -->
     <div>
       <el-table
+    v-loading="loading"
     ref="multipleTable"
     :data="logTableData"
     tooltip-effect="dark"
@@ -106,6 +107,7 @@
 export default {
   data() {
     return {
+      loading: true,
       logTableData: [],
       pageNum: 1, // 当前页码
       pageSize: 10, // 每页显示的数量
@@ -148,6 +150,7 @@ export default {
       this.getLogPage();
     },
     async getLogPage() {
+      this.loading = true;
         var data = await this.$axiosPost(ApiConst.log.getPage,this.formInline);
         console.log('getLogPage',data);
         if(data.code){
@@ -156,6 +159,7 @@ export default {
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
+          this.loading = false;
         }
     }
   }

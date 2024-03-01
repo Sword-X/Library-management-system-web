@@ -24,6 +24,7 @@
     <!-- 列表显示区域 -->
     <div>
       <el-table
+    v-loading="loading"
     ref="multipleTable"
     :data="menuTableData"
     tooltip-effect="dark"
@@ -114,6 +115,7 @@
 export default {
   data() {
     return {
+      loading: true,
       menuTableData: [],
       multipleSelection: [],
       ids: [],
@@ -222,6 +224,7 @@ export default {
       this.getMenuPage();
     },
     async getMenuPage() {
+      this.loading = true;
         var data = await this.$axiosPost(ApiConst.menu.getPage,this.formInline);
         console.log('getMenuPage',data);
         if(data.code){
@@ -230,6 +233,7 @@ export default {
           this.pageSize = data.data.pageSize;
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
+          this.loading = false;
         }
     }
   },
