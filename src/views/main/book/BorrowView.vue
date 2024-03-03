@@ -13,10 +13,18 @@
       <el-input style="width: 150px" v-model="formInline.userName" placeholder="请输入借阅者姓名"></el-input>
       </el-form-item>
       <el-form-item label="状态" >
-      <el-input style="width: 150px" v-model="formInline.status" placeholder="借阅中"></el-input>
+          <el-select @change="changeSearchStatus" v-model="formInline.status" clearable placeholder="请选择状态">
+            <el-option
+              v-for="item in borrowStatus"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code">
+            </el-option>
+          </el-select>
+      <!-- <el-input style="width: 150px" v-model="formInline.status" placeholder="借阅中"></el-input> -->
       </el-form-item>
       <el-form-item label="分类" >
-      <el-input style="width: 150px" v-model="formInline.categoryId" placeholder="请输入分类"></el-input>
+      <el-input style="width: 150px" v-model="formInline.categoryName" placeholder="请输入分类名称"></el-input>
       </el-form-item>
       <el-form-item label="标签" >
       <el-input style="width: 150px" v-model="formInline.tag" placeholder="请输入标签"></el-input>
@@ -63,6 +71,9 @@
       prop="status"
       label="状态"
       align="center">
+      <template slot-scope="scope">
+          <span>{{getStatusString(scope.row.status)}}</span>
+      </template>
     </el-table-column>
     <el-table-column
       prop="borrowTime"
@@ -91,11 +102,20 @@
     <el-table-column label="操作"
       align="center">
       <template slot-scope="scope">
+        <el-popconfirm
+        confirm-button-text='确定'
+        cancel-button-text='取消'
+        icon="el-icon-info"
+        icon-color="red"
+        title="是否确认还书？"
+        @confirm = "returnBook(scope.$index, scope.row)">
         <el-button
+          slot="reference"
           size="mini"
           type="warning"
-          :disabled="false"
-          @click="handleEdit(scope.$index, scope.row)">还书</el-button>
+          :disabled="scope.row.status == 2">
+          {{scope.row.status == 2?'已还':'还书'}}</el-button>
+        </el-popconfirm>
       </template>
       </el-table-column>
     </el-table>
@@ -118,9 +138,12 @@
 
 <script>
   import ApiConst from '@/serverApi/api';
+  import { Message } from 'element-ui';
 export default {
   data() {
     return {
+      borrowStatusValue: '',
+      borrowStatus: [],
       loading: true,
       borrowTableData: [],
       pageNum: 1, // 当前页码
@@ -138,6 +161,35 @@ export default {
     this.fetchData();
   },
   methods: {
+    changeSearchStatus(value){
+console.log(value,"222222222222222222");
+      if(value){
+        this.formInline.status = value;
+      }else{
+        this.formInline.status = '';
+      }
+    },
+    getStatusString(status){
+      switch(status){
+        case 1:
+          return '借阅中';
+        case 2:
+          return '已归还';
+        case 3:
+          return '已逾期';
+        default:
+          return '';
+      }
+    },
+    async returnBook(index,row){
+      console.log(index,row);
+      var data = await this.$axiosPost(ApiConst.bookStore.returnBook,row);
+        console.log('borrowBook',data);
+        if(data.code){
+          Message.success("操作成功！");
+          this.fetchData();
+        }
+    },
       dateFormat(dateStr){
       if(dateStr){
         return new Date(dateStr).toLocaleString().replaceAll("/","-");
@@ -145,6 +197,7 @@ export default {
       },
     // 从服务器获取数据的函数
     fetchData() {
+      this.getBorrowStatus();
       this.getBorrowPage();
     },
     // 处理每页显示数量变化
@@ -174,6 +227,13 @@ export default {
           this.pageNum = data.data.pageNum;
           this.total = data.data.total;
           this.loading = false;
+        }
+    },
+    async getBorrowStatus() {
+        var data = await this.$axiosPost(ApiConst.borrow.getStatus);
+        if(data.code){
+          // Message.success("操作成功！");
+        this.borrowStatus = data.data;
         }
     }
   }

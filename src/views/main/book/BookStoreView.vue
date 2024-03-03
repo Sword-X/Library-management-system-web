@@ -10,7 +10,7 @@
       <el-input v-model="formInline.author" placeholder="请输入作者"></el-input>
       </el-form-item>
       <el-form-item label="分类">
-      <el-input v-model="formInline.categoryId" placeholder="请输入分类"></el-input>
+      <el-input v-model="formInline.categoryName" placeholder="请输入分类"></el-input>
       </el-form-item>
       <el-form-item label="标签">
       <el-input v-model="formInline.tag" placeholder="请输入标签"></el-input>
@@ -45,21 +45,25 @@
       align="center">
     </el-table-column>
     <el-table-column
+      width="120"
       prop="bookName"
       label="书名"
       align="center">
     </el-table-column>
     <el-table-column
+    width="120"
       prop="author"
       label="作者"
       align="center">
     </el-table-column>
-        <el-table-column
-      prop="categoryId"
-      label="分类ID"
+    <el-table-column
+      width="120"
+      prop="categoryName"
+      label="分类"
       align="center">
     </el-table-column>
     <el-table-column
+      width="120"
       prop="tag"
       label="标签"
       align="center">
@@ -70,32 +74,62 @@
       align="center">
     </el-table-column>
     <el-table-column
+      width="80"
+      prop="publishDate"
+      label="出版时间"
+      align="center">
+    </el-table-column>
+    <el-table-column
       prop="isbn"
       label="国际标准书号"
       align="center">
     </el-table-column>
     <el-table-column
+      width="80"
+      prop="stock"
+      label="库存总量"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      width="80"
+      prop="remainStock"
+      label="可借库存"
+      align="center">
+    </el-table-column>
+    <el-table-column
+      width="140"
+      :show-overflow-tooltip="true"
       prop="description"
       label="描述"
       align="center">
     </el-table-column>
     <el-table-column
+      width="140"
       prop="createTime"
-      label="添加时间"
+      label="入库时间"
       align="center">
       <template slot-scope="scope">
           <span>{{dateFormat(scope.row.createTime) }}</span>
       </template>
     </el-table-column>
     <el-table-column label="操作"
+      width="220"
       align="center">
       <template slot-scope="scope">
         <el-button
           size="mini"
+          v-show="roleCole == 'JYZ'"
+          type="warning"
+          :disabled='scope.row.borrowStatus == 0'
+          @click="borrowBook(scope.$index, scope.row)">{{ scope.row.borrowStatus == 0?'阅读中':borrowBookButTitle}}</el-button>
+        <el-button
+          size="mini"
+          v-show="roleCole != 'JYZ'"
           @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
         <el-button
           size="mini"
           type="danger"
+          v-show="roleCole != 'JYZ'"
           @click="handleDelete(scope.$index, scope.row)">删除</el-button>
       </template>
       </el-table-column>
@@ -124,6 +158,8 @@
 export default {
   data() {
     return {
+      borrowBookButTitle: "借书",
+      roleCole: localStorage.getItem('roleCode'),
       loading: true,
       bookStoreTableData: [],
       multipleSelection: [],
@@ -140,19 +176,34 @@ export default {
     };
   },
   created() {
-    // 模拟从服务器获取数据
+    // 从服务器获取数据
     this.fetchData();
   },
   methods: {
-    // 监听switch滑块组件
-    async handleSwitchChange(val1,val2){
-      console.log(val1,val2);
-      val1.status = val2;
-      var data = await this.$axiosPost(ApiConst.bookStore.save,val1);
-          if(data.code){
-            Message.success("操作成功！");
-          }
+    async borrowBook(index,row){
+      console.log(index,row);
+      if(row.remainStock < 1){
+        Message.error("可借数量不足");
+        return;
+      }
+      var data = await this.$axiosPost(ApiConst.bookStore.borrowBook,row);
+        console.log('borrowBook',data);
+        if(data.code){
+          Message.success("操作成功！");
+          this.fetchData();
+          // this.bookStoreTableData = data.data.list;
+          // this.pageSize = data.data.pageSize;
+          // this.pageNum = data.data.pageNum;
+          // this.total = data.data.total;
+          // this.loading = false;
+        }
     },
+      async getBookCategorys() {
+            var data = await this.$axiosPost(ApiConst.bookCategory.getList,this.addBookStoreForm);
+            if(data.code){
+              return data.data;
+            }
+        },
       // 监听子组件传值
       handleCustomEvent(flag){
         console.log('监听用户管理子组件传值',flag)
@@ -183,6 +234,7 @@ export default {
       async handleEdit(index, row) {
         this.$refs.addBookStoreDialog.dialogFormVisible = true;
         this.$refs.addBookStoreDialog.title = "编辑图书";
+        this.getBookCategorys().then((data) => {this.$refs.addBookStoreDialog.bookCategorys = data});
         // this.$refs.addBookStoreDialog.bookStoreNameInput = true;
         this.$refs.addBookStoreDialog.addBookStoreForm = Object.assign({},row);
         console.log(index, row);
@@ -211,6 +263,7 @@ export default {
     openAddBookStoreDialog(){
       this.$refs.addBookStoreDialog.dialogFormVisible = true;
       this.$refs.addBookStoreDialog.title = "新增图书";
+      this.getBookCategorys().then((data) => {this.$refs.addBookStoreDialog.bookCategorys = data});
     },
     // 从服务器获取数据的函数
     fetchData() {

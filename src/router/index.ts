@@ -35,18 +35,25 @@ const routes: Array<RouteConfig> = [
         path: '/user',
         name: 'user',
         component: () => import(/* webpackChunkName: "about" */ '../views/main/user/UserView.vue')
-      },{
-        path: '/book',
-        name: 'book',
-        component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BookView.vue'),
-        children: [
-          {
-            path: '/borrow',
-            name: 'borrow',
-            component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BorrowView.vue')
-          }
-        ]
-      },{
+      }
+      // ,{
+      //   path: '/book',
+      //   name: 'book',
+      //   component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BookView.vue'),
+      //   children: [
+      //     {
+      //       path: '/borrow',
+      //       name: 'borrow',
+      //       component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BorrowView.vue')
+      //     }
+      //   ]
+      // }
+      ,{
+        path: '/borrow',
+        name: 'borrow',
+        component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BorrowView.vue')
+      }
+      ,{
         path: '/bookStore',
         name: 'bookStore',
         component: () => import(/* webpackChunkName: "about" */ '../views/main/book/BookStoreView.vue')
@@ -92,7 +99,8 @@ const router = new VueRouter({
 router.beforeEach((to,from,next) => {
   console.log("全局登录判断",to,from,next)
   if(to.name != 'login'){
-    const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if(!token){
       next("/login");
     }else{

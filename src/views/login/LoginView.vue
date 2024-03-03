@@ -128,11 +128,16 @@
         this.$refs[formName].validate(async (valid) => {
           if (valid) {
             var data = await this.$axiosPost(ApiConst.user.login,this.ruleForm);
-            localStorage.setItem("token",data.data.token);
-            localStorage.setItem("username",data.data.username);
-            localStorage.setItem("name",data.data.name)
-            console.log(data.data)
+            // localStorage.setItem("token",data.data.token);
+            // localStorage.setItem("username",data.data.username);
+            // localStorage.setItem("name",data.data.name)
             if(data.code){
+              localStorage.setItem("appName",data.data.appConfig.appName);
+              localStorage.setItem("roleCode",data.data.roleCode);
+              localStorage.setItem("menuList",JSON.stringify(data.data.menuList));
+              sessionStorage.setItem("token",data.data.token);
+              sessionStorage.setItem("username",data.data.username);
+              sessionStorage.setItem("name",data.data.name)
               Message.success("操作成功！");
               this.$router.push("/index");
             }

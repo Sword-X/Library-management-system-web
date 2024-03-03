@@ -14,8 +14,16 @@ export function axiosGet(url:any,parameter={}) {
   })
 }
 //post
-export function axiosPost(url:any,parameter={}) {
-  const token = localStorage.getItem("token");
+export function axiosPost(url:any,parameter={username: ''}) {
+  // const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
+  let username = '';
+  if(parameter){
+    username = parameter.username;
+  }
+  // if (url.incudes('login')) {
+  //     parameter.username;
+  // }
   return axios({
     url: url,
     method:'post' ,
@@ -23,6 +31,7 @@ export function axiosPost(url:any,parameter={}) {
     headers: {
       'token': token,
       'Content-Type': "application/json;charset=UTF-8",
+      'guest': username != ''?username:''
     }
   })
 }

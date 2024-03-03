@@ -13,14 +13,10 @@
                 <i class="el-icon-s-home"></i>
                 <span slot="title">首页</span>
             </el-menu-item>
-            <div v-for="item in menuList" :key="item.id">
-                <el-menu-item :index="item.menuUrl">
+            <el-menu-item index="/bookStore">
                 <i class="el-icon-reading"></i>
-                    <span slot="title">{{item.menuName}}</span>
-                </el-menu-item>
-            </div>
-            
-              
+                <span slot="title">藏书阁</span>
+            </el-menu-item>
             <!-- <el-submenu index="/book">
                 <template slot="title">
                     <i class="el-icon-notebook-1"></i>
@@ -31,7 +27,7 @@
                     <el-menu-item index="4-2">选项2</el-menu-item>
                 </el-menu-item-group>
             </el-submenu> -->
-            <!-- <el-menu-item index="/borrow">
+            <el-menu-item index="/borrow">
                 <i class="el-icon-reading"></i>
                 <span slot="title">借阅信息</span>
             </el-menu-item>
@@ -62,30 +58,13 @@
             <el-menu-item index="/log">
                 <i class="el-icon-lock"></i>
                 <span slot="title">审计日志</span>
-            </el-menu-item> -->
+            </el-menu-item>
         </el-menu>
     </el-aside>
 </template>
 
 <script>
   export default {
-    props:{
-        // menuList: JSON.parse(localStorage.getItem('menuList')),
-    },
-    data() {
-        return {
-            menuList: JSON.parse(localStorage.getItem('menuList')),
-            // menuList: [
-            //     {
-            //         id: 1,
-            //         name: '111',
-            //     },{
-            //         id: 2,
-            //         name: '222',
-            //     }
-            // ]
-        };
-    },
     methods: {
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
@@ -93,9 +72,6 @@
       handleClose(key, keyPath) {
         console.log(key, keyPath);
       }
-    },
-    created(){
-        console.log(this.menuList,"555555555555555555")
     }
   }
 </script>

@@ -38,19 +38,16 @@
     <el-table-column
       prop="menuName"
       label="菜单名称"
-      width="240"
       align="center">
     </el-table-column>
     <el-table-column
       prop="menuUrl"
       label="菜单路径"
-      width="240"
       align="center">
     </el-table-column>
     <el-table-column
       prop="status"
       label="状态"
-      width="240"
       align="center">
       <template slot-scope="scope">
         <el-switch
@@ -64,9 +61,13 @@
       </template>
     </el-table-column>
     <el-table-column
+      prop="sort"
+      label="排序值"
+      align="center">
+    </el-table-column>
+    <el-table-column
       prop="createTime"
       label="创建时间"
-      width="240"
       align="center">
       <template slot-scope="scope">
           <span>{{dateFormat(scope.row.createTime) }}</span>
@@ -75,7 +76,6 @@
     <el-table-column
       prop="appSystemVersion"
       label="系统版本"
-      width="240"
       align="center">
     </el-table-column>
     <el-table-column label="操作"

@@ -48,6 +48,22 @@
       align="center">
     </el-table-column>
     <el-table-column
+      prop="isDefault"
+      label="是否为默认角色"
+      width="240"
+      align="center">
+      <template slot-scope="scope">
+        <el-switch
+          v-model="scope.row.isDefault"
+          :active-value='1'
+          :inactive-value='0'
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          @change="handleSwitchChange(scope.row,scope.row.isDefault)">
+        </el-switch>
+      </template>
+    </el-table-column>
+    <el-table-column
       prop="createTime"
       label="创建时间"
       width="240"
@@ -72,10 +88,12 @@
       <template slot-scope="scope">
         <el-button
           size="mini"
+          :disabled="scope.row.isSafe == 1"
           @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
         <el-button
           size="mini"
           type="danger"
+          :disabled="scope.row.isSafe == 1"
           @click="handleDelete(scope.$index, scope.row)">删除</el-button>
       </template>
       </el-table-column>
@@ -222,6 +240,15 @@ export default {
     this.fetchData();
   },
   methods: {
+      async handleSwitchChange(row,status){
+        console.log(row,status);
+        row.isDefault = status;
+        var data = await this.$axiosPost(ApiConst.role.updateDeafultRole,row);
+        if(data.code){
+          Message.success("操作成功！");
+          this.fetchData();
+        }
+      },
     async deleteIncludUser(index,row){
       console.log(row);
       row.roleId = this.userRow.id;
@@ -273,13 +300,13 @@ export default {
     async saveAssignMenu(){
       console.log(this.$refs.tree.getCheckedKeys());
       this.checkedMenuIds = this.$refs.tree.getCheckedKeys();
-      if(this.checkedMenuIds && this.checkedMenuIds.length > 0){
+      // if(this.checkedMenuIds && this.checkedMenuIds.length > 0){
         this.row.roleMenuIds = this.checkedMenuIds;
       var data = await this.$axiosPost(ApiConst.role.saveAssignMenu,this.row);
         if(data.code){
           Message.success("操作成功");        
         }
-      }
+      // }
       this.menuData = [];
       this.checkedMenuIds = [];
       this.row = {};
@@ -324,7 +351,7 @@ export default {
       async handleEdit(index, row) {
         this.$refs.addRoleDialog.dialogFormVisible = true;
         this.$refs.addRoleDialog.title = "编辑角色";
-        this.$refs.addRoleDialog.roleRoleInput = true;
+        // this.$refs.addRoleDialog.roleRoleInput = true;
         this.$refs.addRoleDialog.addRoleForm = Object.assign({},row);
         console.log(index, row);
       },

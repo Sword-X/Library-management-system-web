@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="show" @close="$emit('update:show', false)">
+  <el-dialog :visible="show" @close="$emit('update:show', false)" :show-close="false">
     <!-- 这里放置对话框内容 -->
     11111
   </el-dialog>

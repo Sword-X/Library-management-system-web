@@ -31,7 +31,9 @@ const ApiConst = {
         // 根据角色获取用户
         getIncludUsers: '/api/lms/role/getIncludUsers',
         // 删除包含的用户
-        deleteIncludUser: '/api/lms/role/deleteIncludUser'
+        deleteIncludUser: '/api/lms/role/deleteIncludUser',
+        // 更新默认角色
+        updateDeafultRole: '/api/lms/role/updateDeafultRole'
     },
     // 菜单管理
     menu: {
@@ -71,16 +73,24 @@ const ApiConst = {
         save: '/api/lms/bookStore/save',
         // 删除
         delete: '/api/lms/bookStore/delete',
+        // 借书
+        borrowBook: '/api/lms/bookStore/borrowBook',
+        // 还书
+        returnBook: '/api/lms/bookStore/returnBook',
     },
     // 借阅信息
     borrow: {
         // 分页
-        getPage: '/api/lms/borrow/getPage'
+        getPage: '/api/lms/borrow/getPage',
+        // 状态
+        getStatus: '/api/lms/borrow/getStatus'
     },
     // 图书分类管理
     bookCategory: {
         // 分页
         getPage: '/api/lms/bookCategory/getPage',
+        // 列表
+        getList: '/api/lms/bookCategory/getList',
         // 新增
         save: '/api/lms/bookCategory/save',
         // 删除

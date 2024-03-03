@@ -12,7 +12,7 @@
       <el-input v-model="formLabelAlign.appVersion"></el-input>
     </el-form-item>
     <el-form-item label="出借天数">
-      <el-input-number min="1" max="45" size="small" v-model="formLabelAlign.borrowDay"></el-input-number>
+      <el-input-number :min="1" :max="45" size="small" v-model="formLabelAlign.borrowDay"></el-input-number>
     </el-form-item>
     <el-form-item label="通知公告">
       <el-input

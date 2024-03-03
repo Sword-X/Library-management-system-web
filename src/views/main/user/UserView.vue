@@ -130,6 +130,7 @@
 export default {
   data() {
     return {
+      checkedRoleIds: [],
       loading: true,
       roleData: [{
       id: 1,
@@ -170,17 +171,18 @@ export default {
     async saveAssignRole(){
       console.log(this.$refs.tree.getCheckedKeys());
       this.checkedRoleIds = this.$refs.tree.getCheckedKeys();
-      if(this.checkedRoleIds && this.checkedRoleIds.length > 0){
-        if(this.checkedRoleIds.length > 1){
+      // if(this.checkedRoleIds && this.checkedRoleIds.length > 0){
+        if(this.checkedRoleIds && this.checkedRoleIds.length > 1){
           Message.error("sorry，只能选择一个角色！");
           return;
         }
         this.row.userRoleIds = this.checkedRoleIds;
         var data = await this.$axiosPost(ApiConst.user.saveAssignRole,this.row);
         if(data.code){
+          localStorage.setItem("roleCode",data.data.roleCode);
           Message.success("操作成功");  
         }
-      }
+      // }
       this.roleData = [];
       this.checkedRoleIds = [];
       this.row = {};
@@ -255,6 +257,7 @@ export default {
 
     openAddUserDialog(){
       this.$refs.addUserDialog.dialogFormVisible = true;
+      this.$refs.addUserDialog.usernameInput = false;
       this.$refs.addUserDialog.title = "新增用户";
     },
     // 从服务器获取数据的函数

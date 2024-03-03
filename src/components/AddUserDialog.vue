@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="35%" center :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="35%" center :close-on-click-modal="false" :show-close="false">
         <el-form :model="registerUserForm" :rules="registerUserRules" ref="registerUserForm">
         <el-form-item label="用户名：" :label-width="formLabelWidth" prop="username">
         <el-input v-model="registerUserForm.username" placeholder="请输入用户名" :disabled="usernameInput"></el-input>
@@ -22,7 +22,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="registerUser('registerUserForm')">确 定</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="cancelForm">取 消</el-button>
         </div>
     </el-dialog>
 </template>
@@ -80,6 +80,10 @@
       }
     },
     methods: {
+      cancelForm(){
+        this.dialogFormVisible = false;
+        this.registerUserForm = {};
+      },
         handleOpen() {
             this.dialogFormVisible = true; // 打开对话框时设置为true
         },

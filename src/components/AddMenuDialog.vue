@@ -1,17 +1,20 @@
 <template>
-    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="35%" center :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="35%" center :close-on-click-modal="false" :show-close="false">
         <el-form :model="addMenuForm" :rules="addMenuRules" ref="addMenuForm">
         <el-form-item label="菜单名称：" :label-width="formLabelWidth" prop="menuName">
-        <el-input v-model="addMenuForm.menuName" placeholder="请输入菜单名称" :disabled="menuNameInput"></el-input>
+        <el-input v-model="addMenuForm.menuName" placeholder="请输入菜单名称"></el-input>
         </el-form-item>
         <el-form-item label="菜单路径：" :label-width="formLabelWidth" prop="menuUrl">
         <el-input v-model="addMenuForm.menuUrl" placeholder="请输入菜单路径"></el-input>
         </el-form-item>
+        <el-form-item label="排序值：" :label-width="formLabelWidth" prop="sort">
+        <el-input v-model="addMenuForm.menuUrl" placeholder="请输入排序值"></el-input>
+        </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addMenu('addMenuForm')">确 定</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        </div>
+        <el-button @click="cancelForm">取 消</el-button>
+      </div>
     </el-dialog>
 </template>
 
@@ -37,6 +40,10 @@
       }
     },
     methods: {
+      cancelForm(){
+        this.dialogFormVisible = false;
+        this.addMenuForm = {};
+      },
         handleOpen() {
             this.dialogFormVisible = true; // 打开对话框时设置为true
         },

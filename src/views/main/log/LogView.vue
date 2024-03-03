@@ -42,43 +42,37 @@
     <el-table-column
       prop="username"
       label="用户名"
-      width="240"
       align="center">
     </el-table-column>
     <el-table-column
       prop="name"
       label="姓名"
-      width="120"
       align="center">
     </el-table-column>
     <el-table-column
       prop="ip"
       label="ip"
-      width="240"
       align="center">
     </el-table-column>
     <el-table-column
       prop="url"
       label="访问路径"
-      width="240"
       align="center">
     </el-table-column>
     <el-table-column
       prop="logTitle"
       label="日志标题"
-      width="240"
+      width="500"
       align="center">
     </el-table-column>
     <el-table-column
       prop="logContent"
       label="日志内容"
-      width="240"
       align="center">
     </el-table-column>
     <el-table-column
       prop="createTime"
       label="记录时间"
-      width="240"
       align="center">
       <template slot-scope="scope">
           <span>{{dateFormat(scope.row.createTime) }}</span>
