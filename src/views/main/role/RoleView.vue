@@ -317,7 +317,6 @@ export default {
       var data = await this.$axiosPost(ApiConst.role.getMenuListByRoleId,row.id);
       if(data.code){
           this.assignMenuDialogVisible = true;
-          console.log(data,1111111111);
           this.menuData = data.data.menus;
           this.checkedMenuIds = data.data.roleMenuIds;
           this.row = data.data;

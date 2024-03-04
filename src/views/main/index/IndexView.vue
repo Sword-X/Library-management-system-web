@@ -2,113 +2,234 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="14">
-        <el-card shadow="hover" style="width: 100%;">
-          <div style="width: 100%; display: inline-block; ">
-            系统通知：本系统将于2小时后维护
-            <!-- <el-statistic :value="deadline2" time-indices title="🎉商品降价🎉">
-              <template slot="suffix">
-                抢购即将开始
-              </template>
-            </el-statistic> -->
-          </div>
-        </el-card>
-        <el-card shadow="hover" style="width: 100%;">
-          <div style="width: 100%; display: inline-block; ">
-            上次登陆时间：
-            <!-- <el-statistic :value="deadline2" time-indices title="🎉商品降价🎉">
-              <template slot="suffix">
-                抢购即将开始
-              </template>
-            </el-statistic> -->
-          </div>
-        </el-card>
-        <el-card shadow="hover" style="width: 100%;margin-top: 20px; ">
-          <div style="width: 100%; display: inline-block; ">
-            <el-statistic
-              @finish="hilarity"
-              :value="deadline3"
-              time-indices
-              title="时间游戏"
-            >
-              <template slot="suffix">
-                <el-button type="primary " size="mini" @click="add"
-                  >add 10s</el-button
-                >
-              </template>
-            </el-statistic>
-          </div>
-        </el-card>
-        <el-card shadow="hover" style="width: 100%;margin-top: 20px; ">
-          <div style="width: 100%; display: inline-block;">
-            <el-statistic
-              format="DD天HH小时mm分钟"
-              :value="deadline5"
-              time-indices
-              title="🚩距离立夏还有："
-            >
-            </el-statistic>
-          </div>
-        </el-card>
+          <el-alert
+            :closable="false"
+            center
+            :title="'系统通知：'+homeData.systemNotice"
+            type="warning"
+            effect="dark">
+          </el-alert>
+    <el-card shadow="hover" style="width: 100%;margin-top: 20px; height: 230px">
+      <el-col :span="8">
+        <div style="padding: 60px">
+          <el-statistic
+            group-separator=","
+            :value="homeData.yesterdayLoginCount"
+            title="昨日登录人次"
+          ></el-statistic>
+        </div>
+      </el-col>
+      <el-col :span="8">
+        <div style="padding: 60px">
+          <el-statistic title="今日登录人次"
+          :value="homeData.todayLoginCount">
+          </el-statistic>
+        </div>
+      </el-col>
+      <el-col :span="8">
+        <div style="padding: 60px">
+          <el-statistic
+            group-separator=","
+            decimal-separator="."
+            :value="(homeData.todayLoginCount-homeData.yesterdayLoginCount)"
+            title="增长人次"
+          >
+          <template slot="prefix">
+            <i class="el-icon-s-flag" style="color: red"></i>
+          </template>
+          <template slot="suffix">
+            <i class="el-icon-s-flag" style="color: blue"></i>
+          </template>
+          </el-statistic>
+        </div>
+      </el-col>
+    </el-card>
       </el-col>
       <el-col :span="10">
         <el-card shadow="hover" style="width: 100%;">
           <div slot="header" class="clearfix">
-            <span>文嘉《明日歌》</span>
-            <el-button
-              style="float: right; padding: 3px 0"
-              type="text"
-              @click="clickFn"
-              >暂停</el-button
-            >
+            <span>《观书有感》</span><br>
+            <span>宋·朱熹</span>
           </div>
           <div style="font-size: 18px;text-align: center; margin-top: 35px;">
-            明日复明日
+            半亩方塘一鉴开
           </div>
-          <div style="font-size: 18px;text-align: center;">明日何其多</div>
-          <div style="font-size: 18px;text-align: center;">我生待明日</div>
-          <div style="font-size: 18px;text-align: center;">万事成蹉跎</div>
+          <div style="font-size: 18px;text-align: center;">天光月影共徘徊</div>
+          <div style="font-size: 18px;text-align: center;">问渠哪得清如许</div>
+          <div style="font-size: 18px;text-align: center;">为有源头活水来</div>
           <div style="margin-top: 35px;"></div>
-          <el-statistic
-            ref="statistic"
-            @finish="hilarity"
-            format="HH:mm:ss"
-            :value="deadline4"
-            title="距离明日："
-            time-indices
-          >
-          </el-statistic>
         </el-card>
       </el-col>
     </el-row>
+    <el-row :gutter="20">
+      <el-col :span="14">
+        <el-card shadow="hover" style="width: 100%;margin-top: 20px; height: 470px">
+        <el-descriptions  title="个人信息" direction="vertical" :column="4" border>
+           <template slot="extra">
+            <el-button type="primary" size="small" @click="clickEditButt()">修改</el-button>
+          </template>
+            <el-descriptions-item label="用户名">{{homeData?.user?.username}}</el-descriptions-item>
+            <el-descriptions-item label="姓名" :span="2">{{homeData?.user?.name}}</el-descriptions-item>
+            <el-descriptions-item label="手机号">{{homeData?.user?.phone}}</el-descriptions-item>
+            <el-descriptions-item label="注册时间">
+            <el-tag size="small">{{dateFormat(homeData?.user?.createTime)}}</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="联系地址">{{homeData?.user?.address}}</el-descriptions-item>
+        </el-descriptions>
+        </el-card>
+      </el-col>
+      <el-col :span="10">
+        <el-card shadow="hover" style="width: 100%;margin-top: 20px; ">
+        <el-table
+          :data="homeData.loginHistoryList"
+          stripe
+          style="width: 100%">
+          <el-table-column
+            align="center"
+            prop="ip"
+            label="历史登录ip">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="createTime"
+            label="历史登录时间">
+            <template slot-scope="scope">
+              <span>{{dateFormat(scope.row.createTime)}}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        </el-card>
+      </el-col>
+    </el-row>
+      <el-dialog :title="title" :visible.sync="dialogFormVisible" width="35%" center :close-on-click-modal="false" :show-close="false">
+          <el-form :model="registerUserForm" :rules="registerUserRules" ref="registerUserForm">
+          <el-form-item label="用户名：" :label-width="formLabelWidth" prop="username">
+          <el-input v-model="registerUserForm.username" placeholder="请输入用户名" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="密码：" :label-width="formLabelWidth" prop="password">
+          <el-input type="password" v-model="registerUserForm.password" placeholder="请输入密码"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码：" :label-width="formLabelWidth" prop="secondPassword">
+          <el-input type="password" v-model="registerUserForm.secondPassword" placeholder="请再次输入密码"></el-input>
+          </el-form-item>
+          <el-form-item label="姓名：" :label-width="formLabelWidth" prop="name">
+          <el-input type="name" v-model="registerUserForm.name" placeholder="请输入姓名"></el-input>
+          </el-form-item>
+          <el-form-item label="手机号：" :label-width="formLabelWidth" prop="phone">
+          <el-input type="name" v-model="registerUserForm.phone" placeholder="请输入手机号"></el-input>
+          </el-form-item>
+          <el-form-item label="地址：" :label-width="formLabelWidth" prop="address">
+          <el-input type="name" v-model="registerUserForm.address" placeholder="请输入地址"></el-input>
+          </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="registerUser('registerUserForm')">确 定</el-button>
+          <el-button @click="cancelForm">取 消</el-button>
+          </div>
+      </el-dialog>
   </div>
 </template>
 
 <script>
+  import ApiConst from '@/serverApi/api';
+  import { Message } from 'element-ui';
+
   export default {
     data() {
+      var validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.registerUserForm.password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
+      var validatePhone = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入手机号'));
+        } else {
+          const reg = /^1[3-9]\d{9}$/;
+          if(!reg.test(value)){
+            callback(new Error('请输入正确的手机号'));
+          }
+          callback();
+        }
+      };
       return {
-        deadline2: Date.now() + 1000 * 60 * 60 * 8,
-        deadline3: Date.now() + 1000 * 60 * 30,
-        deadline4: Date.now() + (new Date().setHours(23, 59, 59) - Date.now()),
-        deadline5: new Date("2023-05-06"),
-        stop: true,
+        homeData:{},
+        // userDialog
+        registerUserRules: {
+          username: [
+            { required: true, message: '请输入用户名', trigger: 'blur' }
+          ],
+          password: [
+            { required: true, message: '请输入密码', trigger: 'blur' }
+          ],
+          secondPassword: [
+            // { required: true, message: '请再次输入密码', trigger: 'blur' },
+            { validator: validatePass2, trigger: 'blur'}
+          ],
+          name: [
+            { required: true, message: '请输入姓名', trigger: 'blur' }
+          ],
+          phone: [
+            // { required: true, message: '请输入手机号', trigger: 'blur' },
+            { validator: validatePhone, trigger: 'blur'}
+          ]
+        },
+        dialogFormVisible: false,
+        registerUserForm: {},
+        title: "用户修改",
+        formLabelWidth: '100px'
       };
     },
+    mounted(){
+      this.getHomeData();
+    },
     methods: {
-      hilarity() {
-        this.$notify({
-          title: "提示",
-          message: "时间已到",
-          duration: 0,
+      dateFormat(dateStr){
+      if(dateStr){
+        return new Date(dateStr).toLocaleString().replaceAll("/","-");
+      }else return '';
+      },
+      registerUser(formName){
+        this.$refs[formName].validate(async (valid) => {
+          if (valid) {
+            var data = await this.$axiosPost(ApiConst.user.save,this.registerUserForm);
+            if(data.code){
+              this.homeData.user = Object.assign({},this.registerUserForm);
+              this.$refs[formName].resetFields();
+              this.registerUserForm = {};
+              this.dialogFormVisible = false;
+              Message.success("操作成功！");
+            }
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
         });
       },
-      clickFn() {
-        this.$refs.statistic.suspend(this.stop);
-        this.stop = !this.stop;
+      cancelForm(){
+        this.registerUserForm = {};
+        this.dialogFormVisible = false;  
       },
-      add() {
-        this.deadline3 = this.deadline3 + 1000 * 10;
+      clickEditButt(){
+        this.dialogFormVisible = true;
+        this.homeData.user.secondPassword = this.homeData.user.password;
+        this.registerUserForm = Object.assign({},this.homeData.user);
+        // this.registerUserForm.secondPassword = this.registerUserForm.password;
       },
+      async getHomeData(){
+        this.loading = true;
+        var data = await this.$axiosPost(ApiConst.home.getHomeData);
+        console.log('getHomeData',data);
+        if(data.code){
+          this.homeData = data.data;
+          this.loading = false;
+        }
+      }
     },
   };
 </script>
+

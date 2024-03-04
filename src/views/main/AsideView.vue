@@ -94,8 +94,5 @@
         console.log(key, keyPath);
       }
     },
-    created(){
-        console.log(this.menuList,"555555555555555555")
-    }
   }
 </script>

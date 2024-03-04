@@ -64,7 +64,7 @@
       async logoutUser(){
         console.log("退出登录。。。",ApiConst.user.logout,localStorage.getItem("username"));
         debugger
-        var data = await this.$axiosPost(ApiConst.user.logout,localStorage.getItem("username"));
+        var data = await this.$axiosPost(ApiConst.user.logout);
         if(data.code){
           localStorage.clear();
           sessionStorage.clear();

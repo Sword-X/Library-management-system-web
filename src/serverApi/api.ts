@@ -1,4 +1,9 @@
 const ApiConst = {
+    // 首页
+    home: {
+        // 获取首页数据
+        getHomeData: '/api/lms/home/getHomeData'
+    },
     // 用户管理
     user: {
         // 分页查询

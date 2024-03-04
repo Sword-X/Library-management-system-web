@@ -193,7 +193,6 @@ export default {
       var data = await this.$axiosPost(ApiConst.user.getRoleListByUserId,row.id);
       if(data.code){
           this.assignRoleDialogVisible = true;
-          console.log(data,1111111111);
           this.roleData = data.data.roles;
           this.checkedRoleIds = data.data.userRoleIds;
           this.row = data.data;

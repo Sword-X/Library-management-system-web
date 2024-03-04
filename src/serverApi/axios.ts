@@ -3,6 +3,7 @@
  */
 import axios from 'axios'
 import { Message } from 'element-ui';
+import Router from '@/router/index'
 
 //请求的服务器的地址
 //  const basePath = 'http://localhost:8080'; 
@@ -33,7 +34,6 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
 //添加响应拦截器
 axiosInstance.interceptors.response.use(
   response => {
@@ -44,7 +44,6 @@ axiosInstance.interceptors.response.use(
      *  如果请求不成功，就在拦截器这里统一处理（组件的代码就不用关注错误的情况了）
      */
     if(response.status==200){
-      console.log("111111111111111111");
       if(response.data.code == 200){
         return response.data;
       }else {
@@ -67,11 +66,18 @@ axiosInstance.interceptors.response.use(
     debugger
     // return Promise.reject(error);
     if(error.response){
+      if(error.request.status == 666){
+          Message.error("操作越权");
+          localStorage.clear();
+          sessionStorage.clear();
+          Router.push("/login");
+          return {"code": null};
+      }
       handleErrorData(error.response.data);
       return error.response;
     }else{
       Message.error("网络出了点小差，请稍后再试。。。");
-      return;
+      return {"code": null};
     }
     
   }
@@ -95,6 +101,9 @@ function handleErrorData(errMes:any){
         Message.error("服务器错误!");
         break;
       case 504 :
+        Message.error("网络超时!");
+        break;
+      case 666 :
         Message.error("网络超时!");
         break;
       default :
