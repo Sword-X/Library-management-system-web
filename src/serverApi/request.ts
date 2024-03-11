@@ -4,10 +4,14 @@
  */
 
 import { axiosInstance as axios } from "./axios"
+import SM4Utils from "@/utils/SM4Utils";
+
+axios.defaults.withCredentials = true;
 
 //get
 export function axiosGet(url:any,parameter={}) {
   return axios({  //这里的 axios 就是从 axios.js 中引入的 axiosInstance
+    withCredentials: true,
     url: url,
     method: 'get',
     params: parameter
@@ -25,6 +29,7 @@ export function axiosPost(url:any,parameter={username: ''}) {
   //     parameter.username;
   // }
   return axios({
+    withCredentials: true,
     url: url,
     method:'post' ,
     data: parameter,

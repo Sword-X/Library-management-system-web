@@ -4,6 +4,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui';
 import Router from '@/router/index'
+import SM4Utils from '@/utils/SM4Utils';
 
 //请求的服务器的地址
 //  const basePath = 'http://localhost:8080'; 
@@ -25,7 +26,14 @@ axiosInstance.interceptors.request.use(
     // if(sessionStorage.getItem("token")){
     //   config.headers.access_token = sessionStorage.getItem("token")
     // }
-    console.log("请求拦截器-----------------")
+    const timestamp = new Date().getTime();
+    config.headers.timestamp = timestamp;
+    console.log("请求拦截器加密前-----------------",config)
+    // const value = {'value': SM4Utils.encryptData(JSON.stringify(config.data))}
+    // config.data = value;
+    config.data = SM4Utils.encryptData(timestamp+"---"+JSON.stringify(config.data));
+    console.log("请求拦截器加密后-----------------",config)
+    console.log("解密：",SM4Utils.decryptData(config.data));
     return config;
   },
   error => {
@@ -38,12 +46,14 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   response => {
     console.log("axios响应拦截器的数据：",response);
+    console.log("响应解密：",SM4Utils.decryptData(response.data))
     /**
      * 对响应数据判断:
      *  如果成功返回数据，就通过return把数据返出去
      *  如果请求不成功，就在拦截器这里统一处理（组件的代码就不用关注错误的情况了）
      */
     if(response.status==200){
+      response.data = JSON.parse(SM4Utils.decryptData(response.data));
       if(response.data.code == 200){
         return response.data;
       }else {
