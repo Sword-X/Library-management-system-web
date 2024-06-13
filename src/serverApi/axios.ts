@@ -8,15 +8,22 @@ import SM4Utils from '@/utils/SM4Utils';
 
 //请求的服务器的地址
 //  const basePath = 'http://localhost:8080'; 
- const basePath = '/api'; 
+//  const basePath = '/api'; 
 
 
-//创建 axios 实例
+// //创建 axios 实例 开发环境
 const axiosInstance = axios.create({
   // baseURL: basePath,
   withCredentials: true,  //是否允许跨域
   timeout: 9000
 });
+
+//创建 axios 实例部署环境
+// const axiosInstance = axios.create({
+//   baseURL: basePath,
+//   withCredentials: true,  //是否允许跨域
+//   timeout: 9000
+// });
 
 //添加请求拦截器
 axiosInstance.interceptors.request.use(

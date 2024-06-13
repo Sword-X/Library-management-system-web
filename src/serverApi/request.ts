@@ -30,6 +30,7 @@ export function axiosPost(url:any,parameter={username: ''}) {
   // }
   return axios({
     withCredentials: true,
+    // withCredentials: false,
     url: url,
     method:'post' ,
     data: parameter,
